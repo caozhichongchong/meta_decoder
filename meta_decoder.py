@@ -8,23 +8,23 @@ import argparse
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument("-i",
                     help="input dir of metagenomes", type=str,
-                    default='/scratch/users/anniz44/ENIGMA/metagenomes',metavar='current dir (.)')
+                    default='example',metavar='current dir (.)')
 parser.add_argument("-inf",
                     help="input file format",
-                    type=str, default='_001.fastq', metavar='.fastq')
+                    type=str, default='.fq', metavar='.fastq')
 parser.add_argument("--r",
                     help="input dir of reference genomes", type=str,
-                    default='/scratch/users/anniz44/ENIGMA/genome',metavar='current dir (.)')
+                    default='example',metavar='current dir (.)')
 parser.add_argument("--rf",
                     help="reference genome file format",
-                    type=str, default='.fasta', metavar='.fasta')
+                    type=str, default='.fa', metavar='.fasta')
 parser.add_argument("--s",
                     help="1: single orienation or 2: both orienations",
                     type=int, default=2, metavar='1 or 2', choices = [1,2])
 parser.add_argument("--o",
                     help="output directory",
-                    type=str, default='/scratch/users/anniz44/ENIGMA/strain_finder',
-                    metavar='strain_finder')
+                    type=str, default='result_decoder',
+                    metavar='result_decoder')
 parser.add_argument("--t",
                     help="number of threads you would like to use",
                     type=int, default=1,
