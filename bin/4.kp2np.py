@@ -1,5 +1,5 @@
 import numpy as np
-import argparse, cPickle, glob, re, sys
+import argparse, pickle, glob, re, sys
 
 # Merge kpileups from multiple samples. Write dictionary of (M, N, 4) numpy arrays where:
 # M = samples
@@ -50,4 +50,4 @@ for sample in sample2index:
             x[contig][i,j-1,k] = count
 
 # Write numpy arrays to file
-cPickle.dump(x, open(args.out, 'w'))
+pickle.dump(x, open(args.out, 'w'))

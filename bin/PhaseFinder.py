@@ -78,8 +78,8 @@ def pipeline_locate(args):
         
         rm -rf {out} {out}.a.bed {out}.b.bed {out}.pos.51.tab {out}.pos.75.tab {out}.51.outfile  {out}.51.outseq  {out}.75.outfile  {out}.75.outseq '''.format(
             out=tmpout, ref=reffile)
-        print("****** NOW RUNNING COMMAND ******: " + cmd)
-        print run_cmd(cmd)
+        print(("****** NOW RUNNING COMMAND ******: " + cmd))
+        print(run_cmd(cmd))
     else:
         # if the einverted parameter is specified
         cmd = '''
@@ -99,8 +99,8 @@ def pipeline_locate(args):
             maxIR=maxIR,
             maxmis=maxmis,
             einvertedParam=einvertedParam)
-        print("****** NOW RUNNING COMMAND ******: " + cmd)
-        print run_cmd(cmd)
+        print(("****** NOW RUNNING COMMAND ******: " + cmd))
+        print(run_cmd(cmd))
 
     seq_dict = SeqIO.to_dict(SeqIO.parse(reffile, "fasta"))
     lines = [x.rstrip().split("\t") for x in open(tmpout + ".pos.tab")]
@@ -132,8 +132,8 @@ def pipeline_locate(args):
             accept = 0
 
         if accept:
-            print >> outfile, "\t".join(each_line)+"\t"+left_seq.seq + \
-                "\t"+mid_seq.seq+"\t" + right_seq.seq
+            print("\t".join(each_line)+"\t"+left_seq.seq + \
+                "\t"+mid_seq.seq+"\t" + right_seq.seq, file=outfile)
 
     os.remove(tmpout + ".pos.tab")
 
@@ -167,9 +167,9 @@ def pipeline_create(args):
 
         outputpos = list(map(int, each_line[1:5]))
         outputpos.append(right_pos2)
-        outputpos = list(map(lambda x: x - left_pos1, outputpos))
+        outputpos = list([x - left_pos1 for x in outputpos])
 
-        print >> f, name + "\t" + "\t".join(map(str, outputpos))
+        print(name + "\t" + "\t".join(map(str, outputpos)), file=f)
 
         Fversion.id = name + "_F"
         Rversion.id = name + "_R"
@@ -182,8 +182,8 @@ def pipeline_create(args):
     SeqIO.write(outseq, invertedfile, "fasta")
     f.close()
     cmd = ''' bowtie-build {genome} {genome} '''.format(genome=invertedfile)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
 
 def process(infile):
@@ -210,23 +210,23 @@ def pipeline_align(args):
         bowtie -p {core}  -a --best --strata {genome} -1 {fq1} -2 {fq2} -S|\
         samtools view -@ {core} -F 4 -h  |sam2bed -d|sortBed |cut -f 1-4,7 > {output}.bed '''.format(
         genome=invertedfile, fq1=fq1, fq2=fq2, output=output, core=core)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
     cmd = '''
     awk -v out={out} 'BEGIN{{OFS="\\t"}}{{print $1"_F",$2,$3,$4,$5"\\n"$1"_R",$2,$3,$4,$5 > out".bed";print $1"_F", $6 "\\n" $1"_R",$6 > out".info" }}'  {out}
     awk '{{print $1"\\t"$2"\\t"$3"\\t1\\n"$1"\\t"$4"\\t"$5"\\t1\\n"$1"\\t"$2"\\t"$5"\\t-1"}}' {out}.bed |slopBed -b {oversize} -g {out}.info |\
     sortBed|intersectBed -c -f 1 -a - -b {output}.bed |awk '{{a[$1]+=$4*$5}}END{{for(i in a){{print i"\\t"a[i]}}}}'|sort -k1,1|sed 's/_F\\t/\\tF\\t/;s/_R\\t/\\tR\\t/' >{output}.span.count'''.format(
         out=invertedfile + ".info.tab", output=output, oversize=oversize)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
     cmd = '''
     cat {output}.bed|awk 'BEGIN{{OFS="\\t"}}{{print $4,$5,$1}}'|sed 's/_\(.\)$/\\t\\1/g'|awk '{{if(and(64,$2)){{P=1}}else{{P=2}};print $1"\\t"P"\\t"$3"\\t"$4}}' > {output}.tab
     cut -f 1-3 {output}.tab|sort|uniq -u|fgrep -f - {output}.tab|cut -f 3-4|sort|uniq -c|awk '{{print $2"\\t"$3"\\t"$1}}' >{output}.pe.count '''.format(
         output=output)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
     dfspan = process("{output}.span.count".format(output=output))
     dfpe = process("{output}.pe.count".format(output=output))
@@ -246,8 +246,8 @@ def pipeline_align(args):
 
     cmd = '''rm {output}.bed {output}.tab {output}.span.count {output}.pe.count {out}.bed {out}.info'''.format(
         output=output, out=invertedfile + ".info.tab")
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
 
 if __name__ == "__main__":
@@ -392,7 +392,7 @@ if __name__ == "__main__":
 
     for i in ["bowtie", "samtools", "sam2bed", "bc","einverted"]:
         if not is_tool(i):
-            print "tool {i} is not installed".format(i=i)
+            print("tool {i} is not installed".format(i=i))
             sys.exit(0)
 
     args = parser.parse_args()

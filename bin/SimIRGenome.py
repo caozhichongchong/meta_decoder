@@ -31,7 +31,7 @@ def SimulateGenome(args):
 
     # Randomly generate the base pairs between inverted DNA regions
     NonIRSize=GSize-sum(IRSize)*2 - sum(IDRSize)
-    a = np.sort(np.random.choice(range(NonIRSize), IDRNum,replace=False))
+    a = np.sort(np.random.choice(list(range(NonIRSize)), IDRNum,replace=False))
     LastSize=NonIRSize-a[-1]
     LastSeq= biased_DNA_generator(GCRatio,LastSize)
     IDRInsertSize=np.insert(np.diff(a), 0, a[0])
@@ -59,7 +59,7 @@ def SimulateGenome(args):
     cumpos=0
     for i in range(IDRNum):
         cumpos+=IDRInsertSize[i]
-        print >>f, name+"\t" +'\t'.join(str(x) for x in [cumpos,cumpos+IRSize[i], cumpos+IRSize[i]+IDRSize[i], cumpos+IRSize[i]+IDRSize[i]+IRSize[i]])
+        print(name+"\t" +'\t'.join(str(x) for x in [cumpos,cumpos+IRSize[i], cumpos+IRSize[i]+IDRSize[i], cumpos+IRSize[i]+IDRSize[i]+IRSize[i]]), file=f)
         cumpos+=IRSize[i]+IDRSize[i]+IRSize[i]
 
 if __name__ == "__main__":

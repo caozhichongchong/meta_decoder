@@ -1,4 +1,4 @@
-import argparse, copy, cPickle, itertools, os.path, random, sys, time, uuid
+import argparse, copy, pickle, itertools, os.path, random, sys, time, uuid
 import numpy as np
 import scipy.spatial.distance as ssd
 from openopt import NLP, MINLP
@@ -64,7 +64,7 @@ def error(nt, e):
 def discretize_genotypes(a):
     b = np.zeros(np.shape(a))
     j = np.argmax(a, -1)
-    b[range(np.shape(a)[0]),j] = 1
+    b[list(range(np.shape(a)[0])),j] = 1
     return b
 
 
@@ -110,10 +110,10 @@ def parse_args():
     group3 = parser.add_argument_group('Search')
     group3.add_argument('-N', help='Number of strains to estimate', type=int, default=None)
     group3.add_argument('--random', help='Use random strain genotypes (default = dominant SNPs)', action='store_true', default=False)
-    group3.add_argument('--s_reps', help='Number of searches (shallow)', type=int, default=sys.maxint)
-    group3.add_argument('--s_iter', help='Number of iterations (shallow)', type=int, default=sys.maxint)
+    group3.add_argument('--s_reps', help='Number of searches (shallow)', type=int, default=sys.maxsize)
+    group3.add_argument('--s_iter', help='Number of iterations (shallow)', type=int, default=sys.maxsize)
     group3.add_argument('--d_reps', help='Number of searches (deep)', type=int, default=0)
-    group3.add_argument('--d_iter', help='Number of iterations (deep)', type=int, default=sys.maxint)
+    group3.add_argument('--d_iter', help='Number of iterations (deep)', type=int, default=sys.maxsize)
     group3.add_argument('--n_keep', help='Number of searches to keep', type=int, default=0)
     group3.add_argument('--converge', help='Search until convergence', action='store_true', default=False)
     group3.add_argument('--robust', help='Robust EM (pay penalty to use uniform frequencies)?', action='store_true', default=False)
@@ -171,10 +171,10 @@ class Data():
         self.shuffled = None
         self.sparse = sparse
         self.phylo = phylo
-        print self,self.sim,self.m,self.n,self.l        
+        print((self,self.sim,self.m,self.n,self.l))        
         # get dimensions
         if self.x is not None:
-            print np.shape(self.x)
+            print((np.shape(self.x)))
             self.m, self.l = np.shape(self.x)[:2]
         
         # load data
@@ -217,11 +217,11 @@ class Data():
         z = []
         for i in range(self.m):
             # get number of non-zero genotypes
-            n = random.choice(range(2, self.n))
+            n = random.choice(list(range(2, self.n)))
             # draw frequencies from dirichlet
             d = np.random.dirichlet([1]*n)
             # randomly select zeros
-            q = [random.choice(range(n+1)) for j in range(self.n-n)]
+            q = [random.choice(list(range(n+1))) for j in range(self.n-n)]
             # insert zeros in frequency matrix
             z.append(np.insert(d, sorted(q), [0]*(self.n-n)))
         self.z = np.array(z)
@@ -248,8 +248,8 @@ class Data():
         p = nts[self.data.x.argmax(axis=2)]
         
         # select random strain indices and replace
-        i = random.sample(range(self.n), k)
-        j = random.sample(range(self.m), k)
+        i = random.sample(list(range(self.n)), k)
+        j = random.sample(list(range(self.m)), k)
         self.p[i,:,:] = p[j,:,:]
         
         return self
@@ -266,11 +266,11 @@ class Data():
         self.p = np.array([[random.choice(nts) for j in range(self.l)] for i in range(self.n)])
 
         # select k random strains from samples
-        i = np.array(random.sample(range(self.m), self.m))[[j % self.m for j in range(k)]]
+        i = np.array(random.sample(list(range(self.m)), self.m))[[j % self.m for j in range(k)]]
         p = np.apply_along_axis(lambda x: nts[rselect(x)], 2, self.data.x[i,:,:])
 
         # select random strain indices and replace
-        i = random.sample(range(self.n), k)
+        i = random.sample(list(range(self.n)), k)
         self.p[i,:,:] = p
         
         return self
@@ -283,7 +283,7 @@ class Data():
         import dendropy
         
         # make alignment from random tree
-        tree = dendropy.treesim.pure_kingman(dendropy.TaxonSet(map(str, range(self.n))))
+        tree = dendropy.treesim.pure_kingman(dendropy.TaxonSet(list(map(str, list(range(self.n))))))
         seqs = [si for si in dendropy.seqsim.generate_hky_dataset(seq_len = self.l*10, tree_model = tree, mutation_rate = self.u).as_string('fasta').split('\n') if si != '' and si[0] != '>']
         
         # count k-morphic sites
@@ -330,7 +330,7 @@ class Data():
     def get_genotypes(self):
         acgt = np.array('A C G T'.split())
         seqs = acgt[np.where(self.p == 1)[2]].reshape(self.n, self.l)
-        seqs = map(lambda a: ''.join(a), seqs)
+        seqs = [''.join(a) for a in seqs]
         return seqs   
     
     
@@ -343,13 +343,13 @@ class Data():
     def write_aln(self, out_fn):
         if out_fn:
             message(self, 'Writing alignment to "%s"' %(out_fn))
-            cPickle.dump(self.x, open(out_fn, 'wb'), protocol=2)
+            pickle.dump(self.x, open(out_fn, 'wb'), protocol=2)
     
     
     def write_data(self, out_fn):
         if out_fn:
             message(self, 'Writing data object to "%s"' %(out_fn))
-            cPickle.dump(self, open(out_fn, 'wb'), protocol=2)
+            pickle.dump(self, open(out_fn, 'wb'), protocol=2)
     
     
 
@@ -408,7 +408,7 @@ class Estimate(Data):
         w[v <= detect_limit] = 'N'
         
         # Collapse genotypes
-        w = map(lambda a: ''.join(a), w)
+        w = [''.join(a) for a in w]
         
         return w
     
@@ -624,7 +624,7 @@ class Estimate(Data):
         # Run EM algorithm and quit on (1) n_iter, (2) max_time, or (3) tol/ntol
         message(self, 'Running %d iterations of EM algorithm' %(n_iter))
         
-        for i in xrange(n_iter):
+        for i in range(n_iter):
             
             # Check time
             if time.time() - t0 >= max_time:
@@ -742,18 +742,18 @@ class EM():
             else:
                 if estimate.loglik >= estimates[uid].loglik:
                     estimates[uid] = estimate
-        self.estimates = np.array(estimates.values())
+        self.estimates = np.array(list(estimates.values()))
         
         # Select best estimates
         self.estimates = self.select_best_estimates(n_keep)
         return self
     
     
-    def shallow_search(self, n, n_reps=sys.maxint, n_iter=sys.maxint, n_keep=None, c=None, exhaustive=False, random=False, robust=False, penalty=None, dtol=None, ftol=None, ntol=None, max_reps=sys.maxint, max_time=sys.maxint, log_fn=None, out_fn=None):
+    def shallow_search(self, n, n_reps=sys.maxsize, n_iter=sys.maxsize, n_keep=None, c=None, exhaustive=False, random=False, robust=False, penalty=None, dtol=None, ftol=None, ntol=None, max_reps=sys.maxsize, max_time=sys.maxsize, log_fn=None, out_fn=None):
         message(self, 'Running shallow search')
         
         # Quickly search initial conditions
-        for i in xrange(n_reps):
+        for i in range(n_reps):
             
             # Check reps
             if self.current_reps() >= max_reps:
@@ -776,15 +776,15 @@ class EM():
         return self
     
     
-    def deep_search(self, n, n_reps=1, n_iter=sys.maxint, n_keep=None, c=None, exhaustive=False, dtol=None, ftol=None, ntol=None, max_time=sys.maxint, log_fn=None, out_fn=None):
+    def deep_search(self, n, n_reps=1, n_iter=sys.maxsize, n_keep=None, c=None, exhaustive=False, dtol=None, ftol=None, ntol=None, max_time=sys.maxsize, log_fn=None, out_fn=None):
         
         # Get indices of estimates for deep search
         if len(self.estimates) == 0:
             return self
         if n_reps < 0:
-            order = sorted(random.sample(range(len(self.estimates)), abs(n_reps)))
+            order = sorted(random.sample(list(range(len(self.estimates))), abs(n_reps)))
         else:
-            order = range(len(self.estimates)) * n_reps
+            order = list(range(len(self.estimates))) * n_reps
         random.shuffle(order)
         
         message(self, 'Running deep search from %d initial conditions' %(len(order)))
@@ -864,8 +864,8 @@ class EM():
             return False
         
         # Distances between estimates
-        u = max(map(np.mean, self.frequency_distances()))
-        v = max(map(np.mean, self.genetic_distances(detect_limit=detect_limit)))
+        u = max(list(map(np.mean, self.frequency_distances())))
+        v = max(list(map(np.mean, self.genetic_distances(detect_limit=detect_limit))))
         
         # Convergent -> return True
         if u <= min_fdist and v <= min_gdist:
@@ -920,7 +920,7 @@ class EM():
     def write_em(self, out_fn, n_keep=1, merge_out=False, force_update=False, reset=False):
         
         if merge_out == True and os.path.exists(out_fn):
-            em = cPickle.load(open(out_fn, 'rb'))
+            em = pickle.load(open(out_fn, 'rb'))
             self = self.merge_estimates(em, n_keep=n_keep, reset=reset)
         else:
             self.total_reps += self.r0
@@ -929,7 +929,7 @@ class EM():
         if out_fn and (self.check_update() or force_update == True):
             for estimate in self.estimates:
                 estimate.update = False
-            cPickle.dump(self, open(out_fn, 'wb'), protocol=2)
+            pickle.dump(self, open(out_fn, 'wb'), protocol=2)
     
     
     def write_otu_table(self, out_fn, detect_limit=0.):
@@ -945,16 +945,16 @@ def load_em(args):
     # Load existing EM object
     if args.em and os.path.exists(args.em):
         message(str, 'Loading EM object from file "%s"' %(args.em))
-        em = cPickle.load(open(args.em, 'rb'))
+        em = pickle.load(open(args.em, 'rb'))
     
     # Make new EM object
     else:
         if args.data and os.path.exists(args.data):
-            data = cPickle.load(open(args.data, 'rb'))
+            data = pickle.load(open(args.data, 'rb'))
         elif args.aln and os.path.exists(args.aln):
-            x = cPickle.load(open(args.aln, 'rb'))
-            print x
-            data = Data(x=cPickle.load(open(args.aln, 'rb')))
+            x = pickle.load(open(args.aln, 'rb'))
+            print(x)
+            data = Data(x=pickle.load(open(args.aln, 'rb')))
         elif args.sim:
             data = Data(sim=args.sim, m=args.m, n=args.n, l=args.l, d=args.d, u=args.u, e=args.e, sparse=args.sparse, phylo=args.phylo)
             data = data.add_noise(f=args.noise)

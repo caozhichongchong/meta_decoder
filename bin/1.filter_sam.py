@@ -48,7 +48,7 @@ for line in open(fn):
 
     # print header
     if line.startswith('@'):
-        print line.rstrip()
+        print((line.rstrip()))
         continue
 
     # get fields
@@ -105,4 +105,4 @@ for line in open(fn):
         quit('ERROR 3: SAM file format')
     
     # finally, print quality filtered line
-    print '\t'.join(sline)
+    print(('\t'.join(sline)))

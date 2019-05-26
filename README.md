@@ -5,7 +5,7 @@
 * input: metagenomes (-i)
 * optional input: reference genomes (-r)
 * requirement: bowtie samtools bedtools emboss  bwa bedops
-* requirement: python < 3
+* requirement: python 3 (branch py3); or python < 3 (branch master)
 * requirement: python-pip python-pandas biopython python-numpy python-FuncDesigner python-DerApproximator
 * to install all requirements:\
 `apt-get install bowtie samtools bedtools emboss python-pip python-pandas`\

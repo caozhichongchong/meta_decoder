@@ -1,4 +1,4 @@
-import argparse, cPickle
+import argparse, pickle
 import numpy as np
 
 
@@ -23,7 +23,7 @@ args = parser.parse_args()
 # Numpy alignments
 # x[contig] = numpy alignment
 # y[genome] = concatenated numpy alignments
-x = cPickle.load(open(args.aln))
+x = pickle.load(open(args.aln))
 y = {}
 
 # Sample list
@@ -86,9 +86,9 @@ for genome in y:
     
     # Get alignment data
     x = y[genome]
-    i = np.array(range(x.shape[0]))
-    j = np.array(range(x.shape[1]))
-    print '\n%s [%d samples x %d sites]' %(genome, len(i), len(j))
+    i = np.array(list(range(x.shape[0])))
+    j = np.array(list(range(x.shape[1])))
+    print(('\n%s [%d samples x %d sites]' %(genome, len(i), len(j))))
     
     # Filter samples by fraction of aligned sites
     if x.shape[0] > 0 and x.shape[1] > 0:
@@ -98,7 +98,7 @@ for genome in y:
         #print pos
         x = x[pos,:,:]
         i = i[pos]
-        print '\tFiltering samples by fraction aligned [%d x %d]' %(len(i), len(j))
+        print(('\tFiltering samples by fraction aligned [%d x %d]' %(len(i), len(j))))
         #print x.shape[0],x.shape[1]
     
     # Remove monomorphic alignment sites
@@ -134,19 +134,19 @@ for genome in y:
 
     # Randomly subsample alignment sites
     if args.npos is not 0 and args.npos < x.shape[1]:
-        pos = sorted(random.sample(range(x.shape[1]), args.npos))
+        pos = sorted(random.sample(list(range(x.shape[1])), args.npos))
         x = x[:,pos,:]
         j = j[pos]
-        print '\tRandomly subsampling %d sites' %(args.npos)
+        print(('\tRandomly subsampling %d sites' %(args.npos)))
         
     # Test empty alignment
     if x.shape[0] == 0 or x.shape[1] == 0:
-        print'\tSkipping genome [%d samples x %d sites]' %(len(i), len(j))
+        print(('\tSkipping genome [%d samples x %d sites]' %(len(i), len(j))))
         continue
     
     # Write alignment
-    print '\tWriting files: %s.np.cPickle, %s.samples.txt, %s.sites.txt' %(genome, genome, genome)
-    cPickle.dump(x, open('%s.np.cPickle' %(genome), 'w'))
+    print(('\tWriting files: %s.np.cPickle, %s.samples.txt, %s.sites.txt' %(genome, genome, genome)))
+    pickle.dump(x, open('%s.np.cPickle' %(genome), 'w'))
     
     # Write samples
     out = open('%s.samples.txt' %(genome), 'w')

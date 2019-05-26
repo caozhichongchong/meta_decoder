@@ -36,8 +36,8 @@ def pipeline(args):
     #        d. The entire read of the first in pair can aligned ($6 ~/^[0-9]*M$/)
     cmd='''
     samtools view -F 14 -@ {core} {input}|awk 'BEGIN{{OFS="\\t"}}{{if(($2==81||$2==97) && $7 == "=" && $6~/^[0-9]*M$/){{if($4<$8){{print $3,$4,$8,$1}}else{{print $3,$8,$4,$1}}}}}}'|sortBed >{prefix}.PE.bed '''.format(input=input,prefix=prefix,core=core)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print((run_cmd(cmd)))
 
     # step 2: identify reads that aligned to two position of the reference genomes
     #      2.1 Remove reads that don't aligned to the reference genomes and sort the sam file based on reads name
@@ -52,8 +52,8 @@ def pipeline(args):
     samtools view -f 129  -@ {core} {prefix}.tmp.bam|sort -k1,1 >{prefix}.tmp.2.sam;
     cut -f 1 {prefix}.tmp.2.sam |uniq -dc|awk '$1==2{{print $2}}'|sort -k1,1 >{prefix}.2.duplist;
     join -t $'\\t' {prefix}.2.duplist  {prefix}.tmp.2.sam >{prefix}.2.sam '''.format(input=input,core=core, min_SR=min_SR,prefix=prefix)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print((run_cmd(cmd)))
 
     # step 3: identify split reads and
     #        3.1. Convert sam to bed format, and sort bed file based on reads name and coordinates where the reads mapped in the genomes
@@ -76,16 +76,16 @@ def pipeline(args):
     cat {prefix}.1.SR.bed {prefix}.2.SR.bed >{prefix}.SR.bed
 
     cut -f 1-3 {prefix}.SR.bed |sort|uniq -c|awk '$1>={min_SR}{{print $2"\\t"$3"\\t"$4}}'| awk '$3-$2>1000 && $3-$2<150000' |sortBed >{prefix}.splitsite.bed '''.format(input=input,core=core, min_SR=min_SR,prefix=prefix)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print((run_cmd(cmd)))
 
     # step 4: identify reads pairs that support the split site identify in step 3 based on insertion size
     # the insertion size - insertions size should be with the range of the insertion size estimated from reads aligned proper
     cmd= '''
     closestBed -a {prefix}.splitsite.bed -b {prefix}.PE.bed|
     awk 'BEGIN{{OFS="\\t"}}{{insize=$6-$5+{readlen}-$3+$2;if(insize >= {mean} - 2*{sd} && insize <= {mean}+2*{sd}){{print $1,$2,$3,$7}}}}' > {prefix}.support.PE.bed '''.format(prefix=prefix,mean=mean,sd=sd,readlen=readlen)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print((run_cmd(cmd)))
 
 
     # step 5: report and summarize the result
@@ -94,13 +94,13 @@ def pipeline(args):
     cat {prefix}.support.SR.bed|awk '{{a[$1"\\t"$2"\\t"$3]=a[$1"\\t"$2"\\t"$3]","$4}}END{{for(i in a){{print i"\\t"a[i]}}}}'|sed 's/\\t,/\\t/g' > {prefix}.tmp.SR.bed
     cat {prefix}.support.PE.bed|awk '{{a[$1"\\t"$2"\\t"$3]=a[$1"\\t"$2"\\t"$3]","$4}}END{{for(i in a){{print i"\\t"a[i]}}}}'|sed 's/\\t,/\\t/g' > {prefix}.tmp.PE.bed
     awk -F $'\\t' 'BEGIN{{print "Scaffolds\\tSplit Site 1\\tSplit Site 2\\tSupporting Split Reads\\tSupporting Read Pairs(first in pair)"}}NR==FNR{{a[$1$2$3]=$4;next}}{{print $0"\\t" a[$1$2$3]}}' {prefix}.tmp.PE.bed {prefix}.tmp.SR.bed >{prefix}.tab '''.format(prefix=prefix)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print((run_cmd(cmd)))
     
     # step 6: remove intermediate file 
     cmd = '''mv {prefix}.tab {output} ; rm  {prefix}.* '''.format(prefix=prefix,output=output)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print((run_cmd(cmd)))
 
 
 if __name__ == "__main__":
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     #check_tools(["sam2bed","bedtools","samtools"])
     for i in ["sam2bed","bedtools","samtools"]:
         if not is_tool(i):
-            print "tool {i} is not installed".format(i=i) 
+            print(("tool {i} is not installed".format(i=i))) 
             sys.exit(0)
 
     pipeline(args)
