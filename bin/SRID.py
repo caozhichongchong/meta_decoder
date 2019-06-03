@@ -43,8 +43,8 @@ def pipeline(args):
     #      2.1 Remove reads that don't aligned to the reference genomes and sort the sam file based on reads name
     #      2.2 Retrieve reads that have two entries in the sam files and store those entries
     cmd = '''
-    #samtools view -F 4 -hb -@ {core} {input} |samtools sort -n -@ {core} > {prefix}.tmp.bam
-    samtools view -F 2 -hb -@ {core} {input} |samtools sort -n -@ {core} > {prefix}.tmp.bam
+    samtools view -F 4 -hb -@ {core} {input} |samtools sort -n -@ {core} > {prefix}.tmp.bam
+    #samtools view -F 2 -hb -@ {core} {input} |samtools sort -n -@ {core} > {prefix}.tmp.bam
     samtools view -f 65 -@ {core} {prefix}.tmp.bam|sort -k1,1 >{prefix}.tmp.1.sam;
     cut -f 1 {prefix}.tmp.1.sam |uniq -dc|awk '$1==2{{print $2}}'|sort -k1,1 >{prefix}.1.duplist;
     join -t $'\\t' {prefix}.1.duplist  {prefix}.tmp.1.sam >{prefix}.1.sam 

@@ -35,12 +35,15 @@ compare the results in 'result_decoder' to the results in 'example'
 
 ## Results
 The result dir of 'result_decoder':
+### Phase variation
 * `out.ratio.txt`: containing the reads that supporting either R or F orientation of invertible DNA
 * `test.ID.fasta`: containing inverted (R) and non-inverted (F) putative invertible DNA regions flanked by sequences of specified length (bowtie indexed)
 * `test.ID.fasta.info.tab`:  describing the location of inverted repeats in the above fasta file
 * `test.ID.fasta.info.tab`:  describing the location of inverted repeats in the above fasta file
 * `test.einverted.tab`:  containing the postion information of invereted repeats in the genome
+### Mobile genetic elements and split read insertion detection (SRID)
 * `out.tab`:  containing the Split Read Insertion Detection (SRID) in the genomes and metagenomes
+### Strain finder
 * `EM file`:  a binary cPickled file. This object holds: (1) the input alignment, (2) simulated data (a Data object), (3) the strain genotypes, and the strain frequencies (Estimate objects).
 * `OTU table`:  This writes the strain genotypes and strain frequencies as an OTU table. The strain genotypes are included in the OTU names.
 
