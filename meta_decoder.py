@@ -129,7 +129,7 @@ for genomes in genome_files:
                 cmd += 'bin/python SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
                     os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.bam'),
                     os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.out.tab'))
-                cmd += 'ls -l %s\nrm -rf %s\n' %(os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' +
+                cmd += '#ls -l %s\n#rm -rf %s\n' %(os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' +
                        os.path.split(genomes)[-1] + '.SRID.bam'),
                                                  os.path.join(args.o,
                                                               os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[
