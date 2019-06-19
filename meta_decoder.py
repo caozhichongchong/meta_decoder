@@ -44,7 +44,7 @@ def reverse_metagenome(filename):
     return cmd
 
 ################################################## Programme ########################################################
-f0=open('strain.finder.sh','w')
+f0=open('meta.decoder.sh','w')
 f0.write('#!/bin/bash\n')
 # number of bash scripts
 task = int(args.t)
@@ -146,7 +146,7 @@ for genomes in genome_files:
         fsub.write('#!/bin/bash\n')
         genome_alignments = os.path.join(args.o, genomes+'.np.cPickle')
         genomes = os.path.split(genomes)[-1]
-        cmd = 'bin/python StrainFinder.py --%s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
+        cmd = 'bin/python StrainFinder.py --aln %s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
                ' --em_out %s.cpickle --otu_out %s.otu_table.txt --log %s.log.txt --n_keep 3 --force_update --merge_out --msg\n' %(genomes, genomes,genomes)
         cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'
         cmd += 'mv %s > %s \n' %(args.r+'/*'+args.rf+'.*',args.o)
@@ -156,6 +156,6 @@ for genomes in genome_files:
 
 shfiles = glob.glob('*.sh')
 for files in shfiles:
-    if 'strain.finder.sh' not in files:
+    if 'meta.decoder.sh' not in files:
         f0.write(('nohup sh %s > %s.nohup.out&\n')%(files,files))
 f0.close()
