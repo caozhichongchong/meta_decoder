@@ -50,9 +50,9 @@ The result dir of 'result_decoder':
 
 ## Copyright
 Copyright: An-Ni Zhang, Christopher Smillie, Xiaofang Jiang, Eric Alm, Alm Lab in MIT\
-https://github.com/cssmillie/StrainFinder\
-https://github.com/XiaofangJ/PhaseFinder\
-https://github.com/XiaofangJ/SRID\
+https://github.com/cssmillie/StrainFinder \
+https://github.com/XiaofangJ/PhaseFinder \
+https://github.com/XiaofangJ/SRID \
 Contact: anniz44@mit.edu or caozhichongchong@gmail.com\
 Citation:
 1. Jiang X, Hall AB, et al. Invertible promoters mediate bacterial phase variation, antibiotic resistance, and host adaptation in the gut, Science (2019) DOI: 10.1126/science.aau5238
