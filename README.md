@@ -36,20 +36,25 @@ compare the results in 'result_decoder' to the results in 'example'
 ## Results
 The result dir of 'result_decoder':
 ### Phase variation
-* `out.ratio.txt`: containing the reads that supporting either R or F orientation of invertible DNA
+* `out.ratio.txt`: containing the metagenomic reads that supporting either R or F orientation of invertible DNA, in the format of \
+`ID(contig:pos_A:pos_B:pos_C:pos_D) 	Pe_F(reads supporting F orientation)	Pe_R(reads supporting R orientation)	Pe_ratio(Pe_R/(Pe_F + Pe_R))	Span_F(reads supporting F orientation spanning the inverted repeat)	Span_R(reads supporting R orientation spanning the inverted repeat)	Span_ratio(Span_R/(Span_F + Span_R))`
 * `test.ID.fasta`: containing inverted (R) and non-inverted (F) putative invertible DNA regions flanked by sequences of specified length (bowtie indexed)
-* `test.ID.fasta.info.tab`:  describing the location of inverted repeats in the above fasta file
-* `test.ID.fasta.info.tab`:  describing the location of inverted repeats in the above fasta file
-* `test.einverted.tab`:  containing the postion information of invereted repeats in the genome
+* `test.ID.fasta.info.tab`:  describing the location of inverted repeats in the above fasta file, in the format of `contig:pos_A:pos_B:pos_C:pos_D`
+* `test.einverted.tab`:  containing the position information of inverted repeats in the genome, in the format of \
+`contig  Split_Site_1(The start of putative MGEs)   Split_Site_2(The end of putative MGEs)   Supporting_Split_Reads  Supporting_Read_Pairs`
 ### Mobile genetic elements and split read insertion detection (SRID)
-* `out.tab`:  containing the Split Read Insertion Detection (SRID) in the genomes and metagenomes
+* `out.tab`:  containing the Split Read Insertion Detection (SRID) in the genomes and metagenomes, in the format of `Scaffolds  pos_A   pos_B   pos_C   pos_D   IR  Sequence_within    IR`
 ### Strain finder
 * `EM file`:  a binary cPickled file. This object holds: (1) the input alignment, (2) simulated data (a Data object), (3) the strain genotypes, and the strain frequencies (Estimate objects).
 * `OTU table`:  This writes the strain genotypes and strain frequencies as an OTU table. The strain genotypes are included in the OTU names.
 
 ## Copyright
 Copyright: An-Ni Zhang, Christopher Smillie, Xiaofang Jiang, Eric Alm, Alm Lab in MIT\
+https://github.com/cssmillie/StrainFinder\
+https://github.com/XiaofangJ/PhaseFinder\
+https://github.com/XiaofangJ/SRID\
 Contact: anniz44@mit.edu or caozhichongchong@gmail.com\
 Citation:
 1. Jiang X, Hall AB, et al. Invertible promoters mediate bacterial phase variation, antibiotic resistance, and host adaptation in the gut, Science (2019) DOI: 10.1126/science.aau5238\
 2. Smillie, C. S., Sauk, J., Gevers, D., Friedman, J., Sung, J., Youngster, I., ... & Allegretti, J. R. (2018). Strain tracking reveals the determinants of bacterial engraftment in the human gut following fecal microbiota transplantation. Cell host & microbe, 23(2), 229-240.
+3. Xiaofang Jiang, Andrew Brantley Hall, Ramnik J Xavier, Eric J Alm (2016) Comprehensive analysis of mobile genetic elements in the gut microbiome reveals a phylum-level niche-adaptive gene pool bioRxiv 214213; doi: https://doi.org/10.1101/214213i.
