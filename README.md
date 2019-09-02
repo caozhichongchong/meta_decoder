@@ -55,6 +55,6 @@ https://github.com/XiaofangJ/PhaseFinder\
 https://github.com/XiaofangJ/SRID\
 Contact: anniz44@mit.edu or caozhichongchong@gmail.com\
 Citation:
-1. Jiang X, Hall AB, et al. Invertible promoters mediate bacterial phase variation, antibiotic resistance, and host adaptation in the gut, Science (2019) DOI: 10.1126/science.aau5238\
+1. Jiang X, Hall AB, et al. Invertible promoters mediate bacterial phase variation, antibiotic resistance, and host adaptation in the gut, Science (2019) DOI: 10.1126/science.aau5238
 2. Smillie, C. S., Sauk, J., Gevers, D., Friedman, J., Sung, J., Youngster, I., ... & Allegretti, J. R. (2018). Strain tracking reveals the determinants of bacterial engraftment in the human gut following fecal microbiota transplantation. Cell host & microbe, 23(2), 229-240.
 3. Xiaofang Jiang, Andrew Brantley Hall, Ramnik J Xavier, Eric J Alm (2016) Comprehensive analysis of mobile genetic elements in the gut microbiome reveals a phylum-level niche-adaptive gene pool bioRxiv 214213; doi: https://doi.org/10.1101/214213i.
