@@ -23,17 +23,17 @@ args = parser.parse_args()
 # Numpy alignments
 # x[contig] = numpy alignment
 # y[genome] = concatenated numpy alignments
-x = pickle.load(open(args.aln))
+x = pickle.load(open(args.aln,'r'))
 y = {}
 
 # Sample list
 # M = [sample1, sample2, ...]
-M = np.array([line.rstrip() for line in open(args.samples)])
+M = np.array([line.rstrip() for line in open(args.samples,'r')])
 
 # Contig map
 # cmap[genome] = [contig1, contig2, ...]
 cmap = {}
-for line in open(args.map):
+for line in open(args.map,'r'):
     line = line.rstrip().split()
     genome = line[0]
     contig = line[1]
