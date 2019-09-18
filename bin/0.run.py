@@ -37,7 +37,7 @@ for prefix in prefixes:
 
 # 3) Convert to BAM
 for prefix in prefixes:
-    os.system('samtools view -bS -F 4 -o %s.bam %s.filter.sam' %(prefix, prefix))
+    os.system('samtools view -S -b -F 4 -o %s.bam %s.filter.sam' %(prefix, prefix))
     os.system('samtools sort %s.bam -o %s.sorted.bam' %(prefix, prefix))
     os.system('samtools index %s.sorted.bam' %(prefix))
     os.system('rm -rf %s.bam %s.filter.sam %s.bam'%(prefix, prefix,prefix))
