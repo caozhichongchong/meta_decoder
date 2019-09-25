@@ -23,7 +23,9 @@ args = parser.parse_args()
 # Numpy alignments
 # x[contig] = numpy alignment
 # y[genome] = concatenated numpy alignments
-x = pickle.load(open(args.aln,'r'))
+file = open(args.aln,'rb')
+x = pickle.load(file)
+file.close()
 y = {}
 
 # Sample list
@@ -146,7 +148,9 @@ for genome in y:
     
     # Write alignment
     print(('\tWriting files: %s.np.cPickle, %s.samples.txt, %s.sites.txt' %(genome, genome, genome)))
-    pickle.dump(x, open('%s.np.cPickle' %(genome), 'w'))
+    file = open('%s.np.cPickle' %(genome), 'wb')
+    pickle.dump(x, file)
+    file.close()
     
     # Write samples
     out = open('%s.samples.txt' %(genome), 'w')

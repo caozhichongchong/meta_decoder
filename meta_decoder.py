@@ -113,6 +113,8 @@ for genomes in genome_files:
     if '.ID.fasta' not in genomes:
         for metagenomes in metagenome_files:
             if '1'+args.inf in metagenomes or args.s == 1:
+                if args.s == 1:
+                    metagenomes = metagenomes.split(args.inf)[0]+'1'+args.inf
                 fsub = open(str(int(i % task)) + '.sh', 'a')
                 fsub.write('#!/bin/bash\n')
                 cmd = ''
@@ -146,8 +148,8 @@ for genomes in genome_files:
     #if '.ID.fasta' not in genomes:
         fsub = open(str(int(i % task)) + '.sh', 'a')
         fsub.write('#!/bin/bash\n')
-        genome_alignments = os.path.join(args.o, genomes+'.np.cPickle')
         genomes = os.path.split(genomes)[-1]
+        genome_alignments = genomes +'.np.cPickle'
         cmd = 'python bin/StrainFinder.py --aln %s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
                ' --em_out %s.cpickle --otu_out %s.otu_table.txt --log %s.log.txt --n_keep 3 --force_update --merge_out --msg\n' %(genomes, genomes,genomes)
         cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'

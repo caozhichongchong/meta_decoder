@@ -50,4 +50,6 @@ for sample in sample2index:
             x[contig][i,j-1,k] = count
 
 # Write numpy arrays to file
-pickle.dump(x, open(args.out, 'w'))
+file = open(args.out, 'wb')
+pickle.dump(x, file)
+file.close()

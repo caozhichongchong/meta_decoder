@@ -35,7 +35,7 @@ def pipeline(args):
     #        c. Both reads align to the same scaffold ( $7== "=")
     #        d. The entire read of the first in pair can aligned ($6 ~/^[0-9]*M$/)
     cmd='''
-    samtools view -F 14 -@ {core} {input}|awk 'BEGIN{{OFS="\\t"}}{{if(($2==81||$2==97) && $7 == "=" && $6~/^[0-9]*M$/){{if($4<$8){{print $3,$4,$8,$1}}else{{print $3,$8,$4,$1}}}}}}'|sortBed >{prefix}.PE.bed '''.format(input=input,prefix=prefix,core=core)
+    mkdir {tmp}\nsamtools view -F 14 -@ {core} {input}|awk 'BEGIN{{OFS="\\t"}}{{if(($2==81||$2==97) && $7 == "=" && $6~/^[0-9]*M$/){{if($4<$8){{print $3,$4,$8,$1}}else{{print $3,$8,$4,$1}}}}}}'|sortBed >{prefix}.PE.bed '''.format(input=input,prefix=prefix,core=core,tmp=tmpdir)
     print(("****** NOW RUNNING COMMAND ******: " + cmd))
     print((run_cmd(cmd)))
 
