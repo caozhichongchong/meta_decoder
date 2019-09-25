@@ -16,7 +16,9 @@
 `pip install numpy`\
 `pip install FuncDesigner`\
 `pip install DerApproximator`\
-`git clone https://github.com/lh3/bwa.git && cd bwa && make`
+`git clone https://github.com/lh3/bwa.git && cd bwa && make`\
+Unfortunately you may have to change the DerApproximator/__init__.py manually for python >= 3:\
+`from .DerApproximator import DerApproximatorException, get_d1, check_d1, get_d2`
 
 ## Install meta_decoder
 `git clone https://github.com/caozhichongchong/meta_decoder.git`\
