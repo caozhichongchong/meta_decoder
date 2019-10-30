@@ -54,7 +54,7 @@ def bowtie(genomes, metagenomes):
         ftest = open(genomes + '.bwt', 'r')
     except IOError:
         cmds += args.bwa + ' index %s \n' % (genomes)
-    cmds += args.bwa + ' mem %s %s |samtools view -S -b >%s.bam \nsamtools sort %s.bam -o %s.sorted.bam | samtools index %s.sorted.bam\n' % (
+    cmds += args.bwa + ' mem %s %s |samtools view -S -b >%s.bam\nsamtools sort %s.bam -o %s.sorted.bam\nsamtools index %s.sorted.bam\n' % (
         genomes, metagenomes,
         tempbamoutput, tempbamoutput, tempbamoutput, tempbamoutput)
     cmds += 'bcftools mpileup -Ou -f %s %s.sorted.bam  | bcftools call -mv > %s.raw.vcf' % (
