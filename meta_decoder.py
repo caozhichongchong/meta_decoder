@@ -88,7 +88,7 @@ def bowtie(genomes, metagenomes):
     # output raw allele counts for each site with the suffix ".frq.count"
     cmds += '%s --vcf %s.flt.vcf --counts --out %s.flt.vcf \n' % (
         args.vcf, tempbamoutput, tempbamoutput)
-    # output Transition / Transversion ratio  in bins of size 1000 with the suffix ".TsTv"
+    # output Transition / Transversion ratio  in bins of size 1000bp with the suffix ".TsTv"
     cmds += '%s --vcf %s.flt.vcf --TsTv 1000 --out %s.flt.vcf \n' % (
         args.vcf, tempbamoutput, tempbamoutput)
     # output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
@@ -103,14 +103,14 @@ def bowtie(genomes, metagenomes):
     # output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
     cmds += '%s --vcf %s.flt.vcf --hardy --out %s.flt.vcf \n' % (
         args.vcf, tempbamoutput, tempbamoutput)
-    # output Tajima D statistic in bins with size of 1000 with the suffix ".Tajima.D"
+    # output Tajima D statistic in bins with size of 1000bp with the suffix ".Tajima.D"
     cmds += '%s --vcf %s.flt.vcf --TajimaD 1000 --out %s.flt.vcf \n' % (
         args.vcf, tempbamoutput, tempbamoutput)
     # output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"
     # Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
     cmds += '%s --vcf %s.flt.vcf --relatedness --out %s.flt.vcf \n' % (
         args.vcf, tempbamoutput, tempbamoutput)
-    # output number and density of SNPs in bins of size of 1000 with the suffix ".snpden"
+    # output number and density of SNPs in bins of size of 1000bp with the suffix ".snpden"
     cmds += '%s --vcf %s.flt.vcf --SNPdensity 1000 --out %s.flt.vcf \n' % (
         args.vcf, tempbamoutput, tempbamoutput)
     # output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"

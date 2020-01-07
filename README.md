@@ -42,15 +42,15 @@ compare the results in 'result_decoder' to the results in 'example'
 * output nucleotide_diversity per 1000bp with the suffix ".windowed.pi"
 * output allele frequency for each site with the suffix ".frq"
 * output raw allele counts for each site with the suffix ".frq.count"
-* output Transition / Transversion ratio  in bins of size 1000 with the suffix ".TsTv"
+* output Transition / Transversion ratio  in bins of size 1000bp with the suffix ".TsTv"
 * output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
 * output Transition / Transversion ratio as a function of alternative allele count with the suffix ".TsTv.count"
 * output a measure of heterozygosity on a per-individual basis with the suffix ".het"
 * output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
-* output Tajima D statistic in bins with size of 1000 with the suffix ".Tajima.D"
+* output Tajima D statistic in bins with size of 1000bp with the suffix ".Tajima.D"
 * output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"\
 Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
-* output number and density of SNPs in bins of size of 1000 with the suffix ".snpden"
+* output number and density of SNPs in bins of size of 1000bp with the suffix ".snpden"
 * output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"
 
 ## Results
