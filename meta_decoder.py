@@ -33,6 +33,18 @@ parser.add_argument('--bwa',
                     help="Optional: complete path to bwa if not in PATH,",
                     metavar="/usr/local/bin/bwa",
                     action='store', default='bwa', type=str)
+parser.add_argument('--bcf',
+                    help="Optional: complete path to bcftools if not in PATH,",
+                    metavar="/usr/local/bin/bcftools",
+                    action='store', default='bcftools', type=str)
+parser.add_argument('--sam',
+                    help="Optional: complete path to bwa if not in PATH,",
+                    metavar="/usr/local/bin/samtools",
+                    action='store', default='samtools', type=str)
+parser.add_argument('--vcf',
+                    help="Optional: complete path to bwa if not in PATH,",
+                    metavar="/usr/local/bin/vcftools",
+                    action='store', default='vcftools', type=str)
 
 ################################################## Definition ########################################################
 args = parser.parse_args()
@@ -53,14 +65,57 @@ def bowtie(genomes, metagenomes):
     try:
         ftest = open(genomes + '.bwt', 'r')
     except IOError:
+        # build bwa library
         cmds += args.bwa + ' index %s \n' % (genomes)
-    cmds += args.bwa + ' mem %s %s |samtools view -S -b >%s.bam\nsamtools sort %s.bam -o %s.sorted.bam\nsamtools index %s.sorted.bam\n' % (
-        genomes, metagenomes,
-        tempbamoutput, tempbamoutput, tempbamoutput, tempbamoutput)
-    cmds += 'bcftools mpileup -Ou -f %s %s.sorted.bam  | bcftools call -mv > %s.raw.vcf' % (
-        genomes, tempbamoutput, tempbamoutput)
-    cmds += '\nbcftools filter -s LowQual -e \'%s || DP>100\' %s.raw.vcf > %s.flt.vcf \n' % (
-        'QUAL<20', tempbamoutput, tempbamoutput)
+    # run alignment
+    cmds += args.bwa + ' mem %s %s |%s view -S -b >%s.bam\n%s sort %s.bam -o %s.sorted.bam\n%s index %s.sorted.bam\n' % (
+        genomes, metagenomes,args.sam,
+        tempbamoutput, args.sam, tempbamoutput, tempbamoutput, args.sam, tempbamoutput)
+    cmds += '%s mpileup -Ou -f %s %s.sorted.bam  | %s call -mv > %s.raw.vcf' % (
+        args.bcf,genomes, tempbamoutput, args.bcf,tempbamoutput)
+    cmds += '\n%s filter -s LowQual -e \'%s || DP>100\' %s.raw.vcf > %s.flt.vcf \n' % (
+        args.bcf,'QUAL<20', tempbamoutput, tempbamoutput)
+    # statistics
+    # output nucleotide_diversity per site with the suffix ".sites.pi"
+    cmds += '%s --vcf %s.flt.vcf --site-pi --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output nucleotide_diversity per 1000bp with the suffix ".windowed.pi"
+    cmds += '%s --vcf %s.flt.vcf --window-pi 1000 --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output allele frequency for each site with the suffix ".frq"
+    cmds += '%s --vcf %s.flt.vcf --freq --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output raw allele counts for each site with the suffix ".frq.count"
+    cmds += '%s --vcf %s.flt.vcf --counts --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output Transition / Transversion ratio  in bins of size 1000 with the suffix ".TsTv"
+    cmds += '%s --vcf %s.flt.vcf --TsTv 1000 --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
+    cmds += '%s --vcf %s.flt.vcf --TsTv-summary --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output Transition / Transversion ratio as a function of alternative allele count with the suffix ".TsTv.count"
+    cmds += '%s --vcf %s.flt.vcf --TsTv-by-count --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output a measure of heterozygosity on a per-individual basis with the suffix ".het"
+    cmds += '%s --vcf %s.flt.vcf --het --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
+    cmds += '%s --vcf %s.flt.vcf --hardy --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output Tajima D statistic in bins with size of 1000 with the suffix ".Tajima.D"
+    cmds += '%s --vcf %s.flt.vcf --TajimaD 1000 --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"
+    # Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
+    cmds += '%s --vcf %s.flt.vcf --relatedness --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output number and density of SNPs in bins of size of 1000 with the suffix ".snpden"
+    cmds += '%s --vcf %s.flt.vcf --SNPdensity 1000 --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
+    # output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"
+    cmds += '%s --vcf %s.flt.vcf --hist-indel-len --out %s.flt.vcf \n' % (
+        args.vcf, tempbamoutput, tempbamoutput)
     return cmds
 
 ################################################## Programme ########################################################
@@ -109,7 +164,7 @@ for genomes in genome_files:
         try:
             f1=open(genomes+'.ID.fasta','r')
         except IOError:
-            fsub = open(str(int(i % task)) + '.sh', 'a')
+            #fsub = open(str(int(i % task)) + '.sh', 'a')
             #fsub.write('#!/bin/bash\n')
             cmd = ''
             try:
@@ -126,7 +181,7 @@ for genomes in genome_files:
                        %(genomes,genomes+'.einverted.tab',genomes+'.ID.fasta')
             i+=1
             #fsub.write(cmd)
-            fsub.close()
+            #fsub.close()
 
 # run bowtie, PhaseFinder and SRID
 i=1
@@ -164,7 +219,7 @@ for genomes in genome_files:
 i=1
 for genomes in genome_files:
     #if '.ID.fasta' not in genomes:
-        fsub = open(str(int(i % task)) + '.sh', 'a')
+        #fsub = open(str(int(i % task)) + '.sh', 'a')
         #fsub.write('#!/bin/bash\n')
         genomes = os.path.split(genomes)[-1]
         genome_alignments = genomes +'.np.cPickle'
@@ -174,7 +229,7 @@ for genomes in genome_files:
         cmd += 'mv %s > %s \n' %(args.r+'/*'+args.rf+'.*',args.o)
         i += 1
         #fsub.write(cmd)
-        fsub.close()
+        #fsub.close()
 
 shfiles = glob.glob('*.sh')
 for files in shfiles:
