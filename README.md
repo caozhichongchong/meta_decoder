@@ -4,7 +4,7 @@
 * meta_decoder: a reference-based metagenomics workflow
 * input: metagenomes (-i)
 * optional input: reference genomes (-r)
-* requirement: bowtie samtools bedtools emboss  bwa bedops
+* requirement: bowtie samtools bedtools vcftools emboss bwa bedops
 * requirement: python 3 (branch py3); or python < 3 (branch master)
 * requirement: python-pip python-pandas biopython python-numpy python-FuncDesigner python-DerApproximator
 * to install all requirements:\
@@ -35,6 +35,23 @@ compare the results in 'result_decoder' to the results in 'example'
 
 `python meta_decoder -i your_dir_metagenomes -inf your_format_metagenomes`\
 `python meta_decoder -i your_dir_metagenomes -inf your_format_metagenomes --r your_dir_reference_genomes --rf your_format_genomes`
+
+## Statistics
+# statistics
+* output nucleotide_diversity per site with the suffix ".sites.pi"
+* output nucleotide_diversity per 1000bp with the suffix ".windowed.pi"
+* output allele frequency for each site with the suffix ".frq"
+* output raw allele counts for each site with the suffix ".frq.count"
+* output Transition / Transversion ratio  in bins of size 1000 with the suffix ".TsTv"
+* output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
+* output Transition / Transversion ratio as a function of alternative allele count with the suffix ".TsTv.count"
+* output a measure of heterozygosity on a per-individual basis with the suffix ".het"
+* output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
+* output Tajima D statistic in bins with size of 1000 with the suffix ".Tajima.D"
+* output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"\
+Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
+* output number and density of SNPs in bins of size of 1000 with the suffix ".snpden"
+* output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"
 
 ## Results
 The result dir of 'result_decoder':
