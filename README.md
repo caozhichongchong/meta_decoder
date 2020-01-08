@@ -32,9 +32,11 @@ in preparation: `anaconda download caozhichongchong/meta_decoder`
 compare the results in 'result_decoder' to the results in 'example'
 
 ## How to use it
-
+#### Step1: alignment and statistics calculation
 `python meta_decoder -i your_dir_metagenomes -inf your_format_metagenomes`\
 `python meta_decoder -i your_dir_metagenomes -inf your_format_metagenomes --r your_dir_reference_genomes --rf your_format_genomes`
+#### Step2 (optional): convert result into html formats
+`python meta_decoder --html T`\
 
 ## Statistics
 # statistics
