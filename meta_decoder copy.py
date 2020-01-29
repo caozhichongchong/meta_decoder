@@ -71,7 +71,7 @@ def bowtie(genomes, metagenomes):
         ftest = open(genomes + '.bwt', 'r')
     except IOError:
         # build bwa library
-        os.system(args.bwa + ' index %s \n' % (genomes))
+        cmds += args.bwa + ' index %s \n' % (genomes)
     # run alignment
     cmds += args.bwa + ' mem %s %s |%s view -S -b >%s.bam\n%s sort %s.bam -o %s.sorted.bam\n%s index %s.sorted.bam\n' % (
         genomes, metagenomes,args.sam,
@@ -80,12 +80,6 @@ def bowtie(genomes, metagenomes):
         args.bcf,genomes, tempbamoutput, args.bcf,tempbamoutput)
     cmds += '\n%s filter -s LowQual -e \'%s || DP>100\' %s.raw.vcf > %s.flt.vcf \n' % (
         args.bcf,'QUAL<20', tempbamoutput, tempbamoutput)
-    # calculate coverage
-    cmds += 'samtools depth -Q 10 %s.sorted.bam > %s.sorted.bam.cov\n' % (
-        tempbamoutput, tempbamoutput)
-    cmds += 'echo -e "Ref_ID\\tCov_length\\tAverage\\tStdev" > %s.sorted.bam.avgcov\n' % (tempbamoutput)
-    cmds += 'samtools depth %s.sorted.bam |  awk \'{sum[$1]+=$3; sumsq[$1]+=$3*$3; count[$1]++} END { for (id in sum) { print id,"\t",count[id],"\t",sum[id]/count[id],"\t",sqrt(sumsq[id]/count[id] - (sum[id]/count[id])**2)}}\' >> %s.sorted.bam.avgcov\n' % (
-        tempbamoutput, tempbamoutput)
     # statistics
     # output nucleotide_diversity per site with the suffix ".sites.pi"
     cmds += '%s --vcf %s.flt.vcf --site-pi --out %s.flt.vcf \n' % (
@@ -176,7 +170,7 @@ if args.html == 'F':
                 os.path.join(args.o, 'metagenome.list'),
                 os.path.join(args.o,'all.ref.genomes.fasta'),
                 os.path.join(args.o, 'ref.map.txt'))
-    #f0.write(cmd)
+    f0.write(cmd)
 
     # run PhaseFinder
     i=1
@@ -209,7 +203,7 @@ if args.html == 'F':
     for genomes in genome_files:
         if '.ID.fasta' not in genomes:
             for metagenomes in metagenome_files:
-                if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes ):
+                if '1'+args.inf in metagenomes or args.s == 1:
                     fsub = open(str(int(i % task)) + '.sh', 'a')
                     fsub.write('#!/bin/bash\n')
                     cmd = ''
@@ -222,9 +216,8 @@ if args.html == 'F':
                         #    metagenomes.replace('1'+args.inf,'2'+args.inf),
                         #    os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
                     cmd += bowtie(genomes, metagenomes)
-                    if args.s != 1:
-                        metagenomes = metagenomes.replace('1' + args.inf, '2' + args.inf)
-                        cmd += bowtie(genomes, metagenomes)
+                    metagenomes = metagenomes.replace('1' + args.inf, '2' + args.inf)
+                    cmd += bowtie(genomes, metagenomes)
                     #cmd += 'python bin/SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
                     #    os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.bam'),
                     #    os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.out.tab'))
@@ -240,9 +233,9 @@ if args.html == 'F':
     # run strain finder
     i=1
     for genomes in genome_files:
-        #if '.ID.fasta' not in genomes:
-            #fsub = open(str(int(i % task)) + '.sh', 'a')
-            #fsub.write('#!/bin/bash\n')
+        if '.ID.fasta' not in genomes:
+            fsub = open(str(int(i % task)) + '.sh', 'a')
+            fsub.write('#!/bin/bash\n')
             genomes = os.path.split(genomes)[-1]
             genome_alignments = genomes +'.np.cPickle'
             cmd = 'python bin/StrainFinder.py --aln %s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
@@ -250,8 +243,8 @@ if args.html == 'F':
             cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'
             cmd += 'mv %s > %s \n' %(args.r+'/*'+args.rf+'.*',args.o)
             i += 1
-            #fsub.write(cmd)
-            #fsub.close()
+            fsub.write(cmd)
+            fsub.close()
 
     shfiles = glob.glob('*.sh')
     for files in shfiles:
