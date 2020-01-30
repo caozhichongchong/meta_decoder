@@ -10,13 +10,10 @@
 * to install all requirements:\
 `apt-get install bowtie samtools bedtools emboss python-pip python-pandas`\
 `wget https://github.com/bedops/bedops/releases/download/v2.4.35/bedops_linux_x86_64-v2.4.35.tar.bz2 && tar jxf bedops_linux_x86_64-v2.4.35.tar.bz2 && sudo cp bin/* /usr/local/bin/`\
-`pip install openopt`\
-`pip install biopython`\
-`pip install pandas`\
-`pip install numpy`\
-`pip install FuncDesigner`\
-`pip install DerApproximator`\
+`pip install vcfstats openopt biopython pandas numpy FuncDesigner DerApproximator`\
 `git clone https://github.com/lh3/bwa.git && cd bwa && make`\
+Require R and package ggplot2\
+https://ggplot2.tidyverse.org/\
 Unfortunately you may have to change the DerApproximator/__init__.py manually for python >= 3\
 https://github.com/PythonCharmers/OOSuite/issues/1\
 `from .DerApproximator import DerApproximatorException, get_d1, check_d1, get_d2`
@@ -36,7 +33,7 @@ compare the results in 'result_decoder' to the results in 'example'
 `python meta_decoder -i your_dir_metagenomes -inf your_format_metagenomes`\
 `python meta_decoder -i your_dir_metagenomes -inf your_format_metagenomes --r your_dir_reference_genomes --rf your_format_genomes`
 #### Step2 (optional): convert result into html formats
-`python meta_decoder --html T`\
+`python meta_decoder --html T`
 
 ## Statistics
 * Measures nucleotide diversity 
