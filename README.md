@@ -39,21 +39,46 @@ compare the results in 'result_decoder' to the results in 'example'
 `python meta_decoder --html T`\
 
 ## Statistics
-# statistics
-* output nucleotide_diversity per site with the suffix ".sites.pi"
-* output nucleotide_diversity per 1000bp with the suffix ".windowed.pi"
-* output allele frequency for each site with the suffix ".frq"
-* output raw allele counts for each site with the suffix ".frq.count"
-* output Transition / Transversion ratio  in bins of size 1000bp with the suffix ".TsTv"
-* output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
-* output Transition / Transversion ratio as a function of alternative allele count with the suffix ".TsTv.count"
-* output a measure of heterozygosity on a per-individual basis with the suffix ".het"
-* output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
-* output Tajima D statistic in bins with size of 1000bp with the suffix ".Tajima.D"
-* output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"\
-Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
-* output number and density of SNPs in bins of size of 1000bp with the suffix ".snpden"
-* output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"
+* Measures nucleotide diversity 
+1. on a per-site basis: output with the suffix ".sites.pi"
+2. in windows (default of 1000bp): output with the suffix ".windowed.pi"
+* Calculate allele frequency for each site: \
+output with the suffix ".frq"
+* Count raw allele counts for each site: \
+output with the suffix ".frq.count"
+* Calculate Transition / Transversion ratio in bins of size 1000bp:\
+output with the suffix ".TsTv"
+* Calculate a simple summary of all Transitions and Transversions:\
+output with the suffix ".TsTv.summary"
+* Calculates the Transition / Transversion ratio as a function of alternative allele count:\
+output with the suffix ".TsTv.count"
+* Calculates a measure of heterozygosity on a per-individual basis.\
+Specfically, the inbreeding coefficient, F, is estimated for each individual using a method of moments:\
+output with the suffix ".het"
+* Reports a p-value for each site from a Hardy-Weinberg Equilibrium test (as defined by Wigginton, Cutler and Abecasis (2005)).\
+The resulting file also contains the Observed numbers of Homozygotes and Heterozygotes and the corresponding Expected numbers under HWE:\
+output with the suffix ".hwe"
+* Calculate Tajima D statistic in bins with size of 1000bp:\
+output with the suffix ".Tajima.D"
+* Calculate a relatedness statistic of unadjusted Ajk statistic based on the method of Yang et al, Nature Genetics 2010 (doi:10.1038/ng.608).\
+Specifically, calculate the unadjusted Ajk statistic.\
+Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves:\
+output with the suffix ".relatedness"
+* Calculate number and density of SNPs in bins of size of 1000bp:\
+output with the suffix ".snpden"
+* Generate a histogram file of the length of all indels (including SNPs).\
+It shows both the count and the percentage of all indels for indel lengths that occur at least once in the input file.\
+SNPs are considered indels with length zero:\
+output with the suffix ".indel.hist"
+
+## Visualization in folder "plot"
+* Alternative allele frequency on each contig: "Allele_frequency_on_each_contig.violin.png"
+* Alternative allele frequency on each contig: "Allele_frequency_on_each_contig_(boxplot).boxplot.png"
+* Counting type of mutant genotypes (HET, HOM_ALT) on each contig: "Mutant_genotypes_on_each_contig.col.png"
+* Number of substitutions of SNPs pass all filters: "Number_of_substitutions_of_SNPs_(passed).col.png"
+* Number of variants on each chromosome: "Number_of_variants_on_genome.col.png"
+* Overall distribution of allele frequency: "Overall_allele_frequency_distribution.histogram.png"
+* Counting types of variants on each contig: "Types_of_variants_on_each_contig.col.png"
 
 ## Results
 The result dir of 'result_decoder':

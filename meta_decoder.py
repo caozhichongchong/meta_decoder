@@ -46,10 +46,15 @@ parser.add_argument('--vcf',
                     help="Optional: complete path to bwa if not in PATH,",
                     metavar="/usr/local/bin/vcftools",
                     action='store', default='vcftools', type=str)
+parser.add_argument('--vcfstats',
+                    help="Optional: complete path to vcfstats if not in PATH,",
+                    metavar="/usr/local/bin/vcfstats",
+                    action='store', default='vcfstats', type=str)
 parser.add_argument("--html",
                     help="convert output into html (--html T)",
                     type=str, default='F',
                     metavar='F or T')
+
 
 ################################################## Definition ########################################################
 args = parser.parse_args()
@@ -57,11 +62,77 @@ try:
     os.mkdir(args.o)
 except OSError:
     pass
+try:
+    os.mkdir(os.path.join(args.o,'plots'))
+except OSError:
+    pass
 ################################################## Function ########################################################
 def reverse_metagenome(filename):
     f1=open(filename.split('1'+args.inf)[0].split(args.inf)[0]+'2'+args.inf,'w')
     f1.close()
     return cmd
+
+def visual(vcffile,outputdir):
+    cmds = ''
+    cmds += "%s --vcf %s --outdir %s/ --formula \'COUNT(1) ~ CONTIG\' --title \'Number of variants on genome\' --ggs \'ylab(\"# Variants\")\'" \
+            %(args.vcfstats,vcffile,outputdir)
+    cmds += "\n%s --vcf %s --outdir %s/ --formula \'COUNT(1, VARTYPE[snp]) ~ SUBST[A>T,A>G,A>C,T>A,T>G,T>C,G>A,G>T,G>C,C>A,C>T,C>G]\' --title \'Number of substitutions of SNPs (passed)\' --passed --ggs \'ylab(\"# Substitutions of SNPs\")\'"\
+            % (args.vcfstats, vcffile, outputdir)
+    cmds += "\n%s --vcf %s --outdir %s/ --formula \'AAF ~ CONTIG\' --title \'Allele frequency on each contig\' --ggs \'ylab(\"# Allele frequency\")\'" \
+            % (args.vcfstats, vcffile, outputdir)
+    cmds += "\n%s --vcf %s --outdir %s/ --formula \'AAF ~ CONTIG\' --title \'Allele frequency on each contig (boxplot)\' --figtype boxplot --ggs \'ylab(\"# Allele frequency\")\'" \
+            % (args.vcfstats, vcffile, outputdir)
+    cmds += "\n%s --vcf %s --outdir %s/ --formula \'AAF ~ 1\' --title \'Overall allele frequency distribution\' --ggs \'ylab(\"Density\")\'" \
+            % (args.vcfstats, vcffile, outputdir)
+    cmds += "\n%s --vcf %s --outdir %s/ --formula \'COUNT(1, group=VARTYPE) ~ CHROM\' --title \'Types of variants on each contig\' --ggs \'ylab(\"Percentage\")\'" \
+            % (args.vcfstats, vcffile, outputdir)
+    cmds += "\n%s --vcf %s --outdir %s/ --formula \'COUNT(1, group=GTTYPEs[HET,HOM_ALT]{0}) ~ CHROM\' --title \'Mutant genotypes on each contig\' --ggs \'ylab(\"# Variants\")\'\n" \
+            % (args.vcfstats, vcffile, outputdir)
+    return cmds
+
+def statistics_vcf(vcffile):
+    cmds = ''
+    # output nucleotide_diversity per site with the suffix ".sites.pi"
+    cmds += '%s --vcf %s --site-pi --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output nucleotide_diversity per 1000bp with the suffix ".windowed.pi"
+    cmds += '%s --vcf %s --window-pi 1000 --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output allele frequency for each site with the suffix ".frq"
+    cmds += '%s --vcf %s --freq --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output raw allele counts for each site with the suffix ".frq.count"
+    cmds += '%s --vcf %s --counts --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output Transition / Transversion ratio  in bins of size 1000bp with the suffix ".TsTv"
+    cmds += '%s --vcf %s --TsTv 1000 --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
+    cmds += '%s --vcf %s --TsTv-summary --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output Transition / Transversion ratio as a function of alternative allele count with the suffix ".TsTv.count"
+    cmds += '%s --vcf %s --TsTv-by-count --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output a measure of heterozygosity on a per-individual basis with the suffix ".het"
+    cmds += '%s --vcf %s --het --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
+    cmds += '%s --vcf %s --hardy --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output Tajima D statistic in bins with size of 1000bp with the suffix ".Tajima.D"
+    cmds += '%s --vcf %s --TajimaD 1000 --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"
+    # Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
+    cmds += '%s --vcf %s --relatedness --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output number and density of SNPs in bins of size of 1000bp with the suffix ".snpden"
+    cmds += '%s --vcf %s --SNPdensity 1000 --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    # output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"
+    cmds += '%s --vcf %s --hist-indel-len --out %s \n' % (
+        args.vcf,  vcffile,  vcffile)
+    return cmds
 
 def bowtie(genomes, metagenomes):
     # bowtie alignment
@@ -87,46 +158,9 @@ def bowtie(genomes, metagenomes):
     cmds += 'samtools depth %s.sorted.bam |  awk \'{sum[$1]+=$3; sumsq[$1]+=$3*$3; count[$1]++} END { for (id in sum) { print id,"\t",count[id],"\t",sum[id]/count[id],"\t",sqrt(sumsq[id]/count[id] - (sum[id]/count[id])**2)}}\' >> %s.sorted.bam.avgcov\n' % (
         tempbamoutput, tempbamoutput)
     # statistics
-    # output nucleotide_diversity per site with the suffix ".sites.pi"
-    cmds += '%s --vcf %s.flt.vcf --site-pi --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output nucleotide_diversity per 1000bp with the suffix ".windowed.pi"
-    cmds += '%s --vcf %s.flt.vcf --window-pi 1000 --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output allele frequency for each site with the suffix ".frq"
-    cmds += '%s --vcf %s.flt.vcf --freq --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output raw allele counts for each site with the suffix ".frq.count"
-    cmds += '%s --vcf %s.flt.vcf --counts --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output Transition / Transversion ratio  in bins of size 1000bp with the suffix ".TsTv"
-    cmds += '%s --vcf %s.flt.vcf --TsTv 1000 --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output a simple summary of all Transitions and Transversions with the suffix ".TsTv.summary"
-    cmds += '%s --vcf %s.flt.vcf --TsTv-summary --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output Transition / Transversion ratio as a function of alternative allele count with the suffix ".TsTv.count"
-    cmds += '%s --vcf %s.flt.vcf --TsTv-by-count --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output a measure of heterozygosity on a per-individual basis with the suffix ".het"
-    cmds += '%s --vcf %s.flt.vcf --het --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output p-value for each site from a Hardy-Weinberg Equilibrium test with the suffix ".hwe"
-    cmds += '%s --vcf %s.flt.vcf --hardy --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output Tajima D statistic in bins with size of 1000bp with the suffix ".Tajima.D"
-    cmds += '%s --vcf %s.flt.vcf --TajimaD 1000 --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output a relatedness statistic of unadjusted Ajk statistic with the suffix ".relatedness"
-    # Expectation of Ajk is zero for individuals within a populations, and one for an individual with themselves
-    cmds += '%s --vcf %s.flt.vcf --relatedness --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output number and density of SNPs in bins of size of 1000bp with the suffix ".snpden"
-    cmds += '%s --vcf %s.flt.vcf --SNPdensity 1000 --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
-    # output a histogram file of the length of all indels (including SNPs) with the suffix ".indel.hist"
-    cmds += '%s --vcf %s.flt.vcf --hist-indel-len --out %s.flt.vcf \n' % (
-        args.vcf, tempbamoutput, tempbamoutput)
+    cmds += statistics_vcf('%s.flt.vcf' % tempbamoutput)
+    # visualization
+    cmds += visual('%s.flt.vcf' % tempbamoutput, os.path.join(args.o,'plots'))
     return cmds
 
 
