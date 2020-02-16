@@ -225,7 +225,7 @@ def cal_cov(output_filename):
     Total_bp = len(open('%s.sort' %(output_filename)).readlines())
     Lines_num = 0
     Genome_length = 3000000
-    genomes = output_filename.split(args.inf+'_')[1].split('args.rf')[0]
+    genomes = output_filename.split(args.inf+'_')[1].split(args.rf)[0]
     for lines in open('%s.sort' %(output_filename),'r'):
         Lines_num += 1
         new_cov = int(lines.replace('\r','').replace('\n',''))
@@ -243,7 +243,7 @@ def cal_cov(output_filename):
 
 def snpsum(output_filename):
     SNP = 0
-    genomes = output_filename.split(args.inf+'_')[1].split('args.rf')[0]
+    genomes = output_filename.split(args.inf+'_')[1].split(args.rf)[0]
     Lines_num = 0
     for lines in open((output_filename),'r'):
         Lines_num += 1
@@ -392,7 +392,7 @@ def freq_call(vcf_file,cov_file):
             foutput.close()
         except IOError:
             pass
-    if args.strainfinder:
+    if args.strainfinder!= 'None':
         strain_finder(cov_file + '.frq.clean.snp')
 
 
