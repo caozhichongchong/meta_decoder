@@ -281,13 +281,10 @@ def strain_finder(SNP_file):
             genome_file = SNP_file + '.genome'
             try:
                 np.savetxt(genome_file, genomes, '%s', '\t')
-                print 'Wrote fitted genomes to location {}'.format(genome_file)
             except IOError:
-                print 'Cannot write fitted genomes to location {}'.format(genome_file)
-                print 'Printing to screen instead:'
-                print genomes
+                pass
         except IndexError:
-            print 'Cannot find strain genotypes for {}'.format(SNP_file)
+            pass
 
 
 
@@ -349,40 +346,6 @@ def freq_call(vcf_file,cov_file):
             Position_diff_new =[]
             for diff in Position_diff:
                 Position_diff_new.append(str(diff))
-            #for lines in open(cov_file,'r'):
-            #    lines = lines.replace('\r','').replace('\n','')
-            #    lines_set = lines.split('\t')
-            #    Chr_position = '%s_%s' % (lines_set[0], lines_set[1])
-            #    if Chr_position not in SNP:
-                    #Output.append('%s\t%s\t0\t0\t0\n'%(lines,lines_set[2]))
-                    #Output2.append('%s\t0\t0\t0\n'%(lines_set[2]))
-            #    else:
-            #        Depth = sum(SNP[Chr_position])
-            #        if Depth > 0 and not any(Depth == allels for allels in SNP[Chr_position]):
-                        #new_line = '%s\t%s\t%s\t%s\t%s\t%s\n' % ('\t'.join(lines_set[0:2]),Depth,SNP[Chr_position][0],
-                        #                                        SNP[Chr_position][1],
-                        #                                        SNP[Chr_position][2],
-                        #                                        SNP[Chr_position][3])
-                        #Output.append(new_line)
-                        #Output2.append('%s\t%s\t%s\t%s\n' % (SNP[Chr_position][0],
-                        #                                        SNP[Chr_position][1],
-                        #                                        SNP[Chr_position][2],
-                        #                                        SNP[Chr_position][3]))
-            #            Output3.append('%s\t%s\t%s\t%s\n' % (SNP[Chr_position][0],
-            #                                                    SNP[Chr_position][1],
-            #                                                    SNP[Chr_position][2],
-            #                                                    SNP[Chr_position][3]))
-            #        else:
-                        #Output.append('%s\t%s\t0\t0\t0\n' % (lines, lines_set[2]))
-                        #Output2.append('%s\t0\t0\t0\n' % (lines_set[2]))
-            #foutput = open(cov_file + '.frq','w')
-            #foutput.write('#CHR\tPOS\tDEP\tA\tT\tG\tC\n')
-            #foutput.write(''.join(Output))
-            #foutput.close()
-            #foutput = open(cov_file + '.frq.clean', 'w')
-            #foutput.write('#\tA\tT\tG\tC\n')
-            #foutput.write(''.join(Output2))
-            #foutput.close()
             foutput = open(cov_file + '.frq.clean.snp', 'w')
             foutput.write('#A\tT\tG\tC\n')
             foutput.write(''.join(Output3))
@@ -412,6 +375,7 @@ def SNP_dynamics(output_files, SNP_outputfile, genomes):
         for numbers in SNP_dynamics_pair[i]:
             SNP_dynamics_pair_output.append('%s\t%s\t%s\n' %(genomes,i,numbers))
     SNP_outputfile.write(''.join(SNP_dynamics_pair_output))
+
 
 ################################################## Programme ########################################################
 if args.html == 'F':
@@ -542,39 +506,56 @@ if args.html == 'F':
         f0.close()
     else:
         genome_files = glob.glob(os.path.join(args.r, '*' + args.rf))
-        #Length = dict()
-        #try:
-        #    for lines in open(os.path.join(args.r,'Genome_size.txt')):
-        #        Length.setdefault(lines.split('\t')[0],float(lines.split('\t')[1].replace('\r','').replace('\n','')))
-        #except IOError:
-        #    pass
+        Length = dict()
+        try:
+            for lines in open(os.path.join(args.r, 'Genome_size.txt')):
+                Length.setdefault(lines.split('\t')[0], float(lines.split('\t')[1].replace('\r', '').replace('\n', '')))
+        except IOError:
+            pass
         # calculate average coverage
-        #all_output = open((os.path.join(args.o, 'all.bam.cov.sum')), 'w')
-        #all_output.write('metagenome\tgenome\tcoverage\tdepth\n')
-        #output_files = glob.glob(os.path.join(args.o, '*.bam.cov'))
-        #for output_filename in output_files:
-        #    cal_cov(output_filename)
-        #all_output.close()
+        all_output = open((os.path.join(args.o, 'all.bam.cov.sum')), 'w')
+        all_output.write('metagenome\tgenome\tcoverage\tdepth\n')
+        output_files = glob.glob(os.path.join(args.o, '*.bam.cov'))
+        for output_filename in output_files:
+            cal_cov(output_filename)
+        all_output.close()
         # calculate average SNPs
-        #all_output = open((os.path.join(args.o, 'all.flt.vcf.snpden.sum')), 'w')
-        #all_output.write('metagenome\tgenome\tavgSNP_per_1kb\ttotal_SNPs\n')
-        #output_files = glob.glob(os.path.join(args.o, '*.flt.vcf.snpden'))
-        #for output_filename in output_files:
-        #    snpsum(output_filename)
-        #all_output.close()
+        all_output = open((os.path.join(args.o, 'all.flt.vcf.snpden.sum')), 'w')
+        all_output.write('metagenome\tgenome\tavgSNP_per_1kb\ttotal_SNPs\n')
+        output_files = glob.glob(os.path.join(args.o, '*.flt.vcf.snpden'))
+        for output_filename in output_files:
+            snpsum(output_filename)
+        all_output.close()
         # calculate allel frequency
         output_files = glob.glob(os.path.join(args.o, '*.flt.vcf'))
         for vcf_file in output_files:
-            cov_file = vcf_file.replace('.flt.vcf','.sorted.bam.cov')
+            cov_file = vcf_file.replace('.flt.vcf', '.sorted.bam.cov')
             freq_call(vcf_file, cov_file)
+        # calculate SNPs dynamics among samples
         foutput = open(os.path.join(SNP_outputdir, 'all.snp.dynamics.txt'), 'w')
         foutput.write('genome\tsample_number\ttotal_snps\n')
         for genomes in genome_files:
-            genomes=os.path.split(genomes)[1]
-            output_files = glob.glob(os.path.join(args.o, '*%s*.flt.vcf')%(genomes))
-            SNP_dynamics(output_files, foutput,genomes)
+            genomes = os.path.split(genomes)[1]
+            output_files = glob.glob(os.path.join(args.o, '*%s*.flt.vcf') % (genomes))
+            SNP_dynamics(output_files, foutput, genomes)
         foutput.close()
-
+        # calculate SNPs diversity
+        foutput = open(os.path.join(SNP_outputdir, 'all.strain.diversity.txt'), 'w')
+        foutput.write('genome\tsample\ttotal_strains\tabu_list\n')
+        output_files = glob.glob(os.path.join(args.o, '*.abu'))
+        foutput_list = []
+        for abu_file in output_files:
+            sample = os.path.split(abu_file)[1].split(args.inf + '_')[0]
+            genomes = abu_file.split(args.inf + '_')[1].split(args.rf)[0]
+            abu_list = []
+            strain_num = 0
+            for lines in open(abu_file, 'r'):
+                lines = lines.replace('\r', '').replace('\n', '')
+                abu_list.append(lines)
+                strain_num+=len(lines.split('\t'))
+            foutput_list.append('%s\t%s\t%s\t%s\n' % (genomes, sample,strain_num, ''.join(abu_list)))
+        foutput.write(''.join(foutput_list))
+        foutput.close()
 else:
     # convert results to html files
     output_files=glob.glob(os.path.join(args.o,'*.flt.vcf.*'))
