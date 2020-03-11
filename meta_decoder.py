@@ -181,6 +181,7 @@ def statistics_vcf(vcffile):
     return cmds
 
 def bowtie(genomes, metagenomes):
+    print('processing bowtie mapping %s for %s' % (metagenomes, genomes))
     # bowtie alignment
     cmds = ''
     tempbamoutput = os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1])
@@ -454,8 +455,9 @@ if args.html == 'F':
             if '.ID.fasta' not in genomes:
                 for metagenomes in metagenome_files:
                     if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes):
+                        print('generating bowtie codes for mapping %s to %s' %(metagenomes, genomes))
                         #fsub = open(str(int(i % task)) + '.sh', 'a')
-                        fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'a')
+                        fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'w')
                         fsub.write('#!/bin/bash\n')
                         cmd = ''
                         #try:
@@ -467,7 +469,8 @@ if args.html == 'F':
                             #    metagenomes.replace('1'+args.inf,'2'+args.inf),
                             #    os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
                         try:
-                            ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.sorted.bam.cov'),'r')
+                            ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+
+                                                    '_'+os.path.split(genomes)[-1]+'.sorted.bam.cov'),'r')
                         except IOError:
                             cmd += bowtie(genomes, metagenomes)
                             if args.s != 1:
@@ -483,6 +486,7 @@ if args.html == 'F':
                         #                                                  -1] + '.SRID.bam'))
                         i += 1
                         fsub.write(cmd)
+                        print('output bowtie codes for mapping %s to %s' % (metagenomes, genomes))
                         fsub.close()
 
         # run strain finder
@@ -496,7 +500,7 @@ if args.html == 'F':
                 cmd = 'python bin/StrainFinder.py --aln %s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
                        ' --em_out %s.cpickle --otu_out %s.otu_table.txt --log %s.log.txt --n_keep 3 --force_update --merge_out --msg\n' %(genomes, genomes,genomes)
                 cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'
-                cmd += 'mv %s > %s \n' %(args.r+'/*'+args.rf+'.*',args.o)
+                cmd += 'mv %s > %s \n' %(os.path.join(args.r,'/*'+args.rf+'.*'),args.o)
                 i += 1
                 #fsub.write(cmd)
                 #fsub.close()
