@@ -7,6 +7,7 @@ import subprocess
 import numpy as np
 import random
 
+
 ############################################ Arguments and declarations ##############################################
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument("-i",
@@ -104,6 +105,7 @@ import os, sys
 if args.strainfinder!='None':
     sys.path.append(args.strainfinder)
     from strainFinder import fitStrains, genomes_given_fracs
+
 
 ################################################## Function ########################################################
 def reverse_metagenome(filename):
@@ -267,7 +269,7 @@ def strain_finder(SNP_file):
             foutput = open(SNP_file + '.abu','w')
             ## fit strains and relative abundances
             fracs, e, ll, dof = fitStrains(counts)
-            best_fracs = fracs.values()[-2]
+            best_fracs = list(fracs.values())[-2]
             best_fracs_new = []
             for abu in best_fracs:
                 best_fracs_new.append(str('%.3f'%(abu)))
@@ -400,17 +402,18 @@ if args.html == 'F':
         metagenome_files=glob.glob(os.path.join(args.i,'*'+args.inf))
         f1=open(os.path.join(args.o,'metagenome.list'),'w')
         cmd = ''
-        for filename in metagenome_files:
-                # create reverse orienation metagenomes
-                try:
-                    ftest = open(filename.split('1'+args.inf)[0].split('2'+args.inf)[0]+'2'+args.inf,'r')
-                    f1.write(str(filename) + '\n')
-                except IOError:
-                    cmd += reverse_metagenome(filename)
-                    f1.write(filename.split(args.inf)[0]+'2'+args.inf+'\n')
-                    f1.write(filename.split(args.inf)[0] + '1' + args.inf + '\n')
-        f1.close()
-        f0.write(cmd)
+        if args.s != 1:
+            for filename in metagenome_files:
+                    # create reverse orienation metagenomes
+                    try:
+                        ftest = open(filename.split('1'+args.inf)[0].split('2'+args.inf)[0]+'2'+args.inf,'r')
+                        f1.write(str(filename) + '\n')
+                    except IOError:
+                        cmd += reverse_metagenome(filename)
+                        f1.write(filename.split(args.inf)[0]+'2'+args.inf+'\n')
+                        f1.write(filename.split(args.inf)[0] + '1' + args.inf + '\n')
+            f1.close()
+            f0.write(cmd)
 
         # run strain finder preprocess
         cmd = 'python bin/0.run.py --fastqs %s  --ref %s  --map %s\n' % (
@@ -479,7 +482,6 @@ if args.html == 'F':
                         #                                              os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[
                         #                                                  -1] + '.SRID.bam'))
                         i += 1
-                        print('output codes in',args.os + '/' +str(int(i % task)) + '.sh',cmd)
                         fsub.write(cmd)
                         fsub.close()
 
