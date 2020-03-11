@@ -68,7 +68,7 @@ parser.add_argument('--strainfinder',
                     help="Optional: complete path to strainfinder",
                     metavar="/scratch/users/anniz44/bin/miniconda3/bin/strainfinder",
                     action='store',
-                    default='/scratch/users/anniz44/bin/miniconda3/bin/strainfinder',
+                    default='None',
                     type=str)
 
 
@@ -98,6 +98,7 @@ Allels['A']=0
 Allels['T']=1
 Allels['G']=2
 Allels['C']=3
+Allels_set = 'ATGC'
 # import strainfinder
 import os, sys
 if args.strainfinder!='None':
@@ -358,7 +359,6 @@ def freq_call(vcf_file,cov_file):
     if args.strainfinder!= 'None':
         strain_finder(cov_file + '.frq.clean.snp')
 
-
 def SNP_dynamics(output_files, SNP_outputfile, genomes):
     SNP_dynamics_pair = dict()
     SNP_dynamics_pair_output = []
@@ -450,15 +450,15 @@ if args.html == 'F':
         for genomes in genome_files:
             if '.ID.fasta' not in genomes:
                 for metagenomes in metagenome_files:
-                    if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes ):
+                    if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes):
                         #fsub = open(str(int(i % task)) + '.sh', 'a')
                         fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'a')
                         fsub.write('#!/bin/bash\n')
                         cmd = ''
-                        try:
-                            ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'),'r')
-                        except IOError:
-                            cmd += ''
+                        #try:
+                        #    ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'),'r')
+                        #except IOError:
+                        #    cmd += ''
                             #cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
                             #    genomes+'.ID.fasta', metagenomes,
                             #    metagenomes.replace('1'+args.inf,'2'+args.inf),
@@ -479,6 +479,7 @@ if args.html == 'F':
                         #                                              os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[
                         #                                                  -1] + '.SRID.bam'))
                         i += 1
+                        print('output codes in',args.os + '/' +str(int(i % task)) + '.sh',cmd)
                         fsub.write(cmd)
                         fsub.close()
 
@@ -501,8 +502,8 @@ if args.html == 'F':
         shfiles = glob.glob('%s/*.sh'%(args.os))
         for files in shfiles:
             if 'meta.decoder.sh' not in files:
-                #f0.write(('nohup sh %s > %s.nohup.out&\n')%(files,files))
-                f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
+                f0.write(('nohup sh %s > %s.nohup.out&\n')%(files,files))
+                #f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
         f0.close()
     else:
         genome_files = glob.glob(os.path.join(args.r, '*' + args.rf))
