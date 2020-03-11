@@ -451,6 +451,8 @@ if args.html == 'F':
 
         # run bowtie, PhaseFinder and SRID
         i=1
+        print('processing all genomes %s' %(' '.join(genome_files)))
+        print('processing all metagenomes %s' % (' '.join(metagenome_files)))
         for genomes in genome_files:
             if '.ID.fasta' not in genomes:
                 for metagenomes in metagenome_files:
