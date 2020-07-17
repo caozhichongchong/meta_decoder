@@ -33,7 +33,7 @@ for prefix in prefixes:
 
 # 2) Filter SAM files
 for prefix in prefixes:
-    os.system('python 1.filter_sam.py %s.sam %s %s > %s.filter.sam' %(prefix, args.pct, args.len, prefix))
+    os.system('python bin/1.filter_sam.py %s.sam %s %s > %s.filter.sam' %(prefix, args.pct, args.len, prefix))
 
 # 3) Convert to BAM
 for prefix in prefixes:
@@ -43,7 +43,7 @@ for prefix in prefixes:
     os.system('rm -rf %s.bam %s.filter.sam %s.bam'%(prefix, prefix,prefix))
 
 # 4) Make gene and sample files
-os.system('python 2.make_gene_file.py --fst %s --out gene_file.txt' %(args.ref))
+os.system('python bin/2.make_gene_file.py --fst %s --out gene_file.txt' %(args.ref))
 out = open('samples.txt', 'w')
 for prefix in prefixes:
     out.write('%s\n' %(prefix))
@@ -51,10 +51,10 @@ out.close()
 
 # 5) Run kpileup
 for prefix in prefixes:
-    os.system('perl 3.kpileup.pl %s %s.sorted.bam gene_file.txt %s %s %s > %s.kp.txt' %(prefix, prefix, args.bqual, args.mqual, args.depth, prefix))
+    os.system('perl bin/3.kpileup.pl %s %s.sorted.bam gene_file.txt %s %s %s > %s.kp.txt' %(prefix, prefix, args.bqual, args.mqual, args.depth, prefix))
 
 # 6) Convert to numpy
-os.system('python 4.kp2np.py --samples samples.txt --gene_file gene_file.txt --out all_alignments.cPickle')
+os.system('python bin/4.kp2np.py --samples samples.txt --gene_file gene_file.txt --out all_alignments.cPickle')
 
 # 7) Concatenate and filter numpy alignments
-os.system('python 5.filter_np.py --aln all_alignments.cPickle --map %s --samples samples.txt --tlen %s --faln %s --mcov %s --dcov %s --npos %s > filter_np.log' %(args.map, args.tlen, args.faln, args.mcov, args.dcov, args.npos))
+os.system('python bin/5.filter_np.py --aln all_alignments.cPickle --map %s --samples samples.txt --tlen %s --faln %s --mcov %s --dcov %s --npos %s > filter_np.log' %(args.map, args.tlen, args.faln, args.mcov, args.dcov, args.npos))
