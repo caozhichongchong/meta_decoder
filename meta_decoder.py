@@ -415,7 +415,6 @@ if args.html == 'F':
                         f1.write(filename.split(args.inf)[0] + '1' + args.inf + '\n')
             f1.close()
             f0.write(cmd)
-        print(metagenome_files,genome_files)
         # run strain finder preprocess
         cmd = 'python bin/0.run.py --fastqs %s  --ref %s  --map %s\n' % (
                     os.path.join(args.o, 'metagenome.list'),
