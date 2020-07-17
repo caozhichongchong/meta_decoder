@@ -392,12 +392,12 @@ if args.html == 'F':
         genome_files=glob.glob(os.path.join(args.r,'*'+args.rf))
         f1=open(os.path.join(args.o,'ref.map.txt'),'w')
         for filename in genome_files:
-            #if '.ID.fasta' not in filename:
+            if '.ID.fasta' not in filename:
                 for record in SeqIO.parse(filename, "fasta"):
                     f1.write(os.path.split(filename)[-1]+'\t'+str(record.id)+'\n')
         f1.close()
         cmd = 'cat '+os.path.join(args.r,'*'+args.rf)+'> %s\n' %(os.path.join(args.o,'all.ref.genomes.fasta'))
-        #f0.write(cmd)
+        f0.write(cmd)
 
         # generate metagenome list file
         metagenome_files=glob.glob(os.path.join(args.i,'*'+args.inf))
@@ -430,8 +430,8 @@ if args.html == 'F':
                 try:
                     f1=open(genomes+'.ID.fasta','r')
                 except IOError:
-                    #fsub = open(str(int(i % task)) + '.sh', 'a')
-                    #fsub.write('#!/bin/bash\n')
+                    fsub = open(str(int(i % task)) + '.sh', 'a')
+                    fsub.write('#!/bin/bash\n')
                     cmd = ''
                     try:
                         ftest = open(
@@ -446,8 +446,8 @@ if args.html == 'F':
                         cmd += 'python bin/PhaseFinder.py create -f %s -t %s -s 1000 -i %s\n' \
                                %(genomes,genomes+'.einverted.tab',genomes+'.ID.fasta')
                     i+=1
-                    #fsub.write(cmd)
-                    #fsub.close()
+                    fsub.write(cmd)
+                    fsub.close()
 
         # run bowtie, PhaseFinder and SRID
         i=1
@@ -458,18 +458,18 @@ if args.html == 'F':
                 for metagenomes in metagenome_files:
                     if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes):
                         print('generating bowtie codes for mapping %s to %s' %(metagenomes, genomes))
-                        #fsub = open(str(int(i % task)) + '.sh', 'a')
+                        fsub = open(str(int(i % task)) + '.sh', 'a')
                         fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'w')
                         fsub.write('#!/bin/bash\n')
                         cmd = ''
-                        #try:
-                        #    ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'),'r')
-                        #except IOError:
-                        #    cmd += ''
-                            #cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
-                            #    genomes+'.ID.fasta', metagenomes,
-                            #    metagenomes.replace('1'+args.inf,'2'+args.inf),
-                            #    os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
+                        try:
+                            ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'),'r')
+                        except IOError:
+                            cmd += ''
+                            cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
+                                genomes+'.ID.fasta', metagenomes,
+                                metagenomes.replace('1'+args.inf,'2'+args.inf),
+                                os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
                         try:
                             ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+
                                                     '_'+os.path.split(genomes)[-1]+'.sorted.bam.cov'),'r')
@@ -478,14 +478,14 @@ if args.html == 'F':
                             if args.s != 1:
                                 metagenomes = metagenomes.replace('1' + args.inf, '2' + args.inf)
                                 cmd += bowtie(genomes, metagenomes)
-                        #cmd += 'python bin/SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
-                        #    os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.bam'),
-                        #    os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.out.tab'))
-                        #cmd += '#ls -l %s\n#rm -rf %s\n' %(os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' +
-                        #       os.path.split(genomes)[-1] + '.SRID.bam'),
-                        #                                 os.path.join(args.o,
-                        #                                              os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[
-                        #                                                  -1] + '.SRID.bam'))
+                        cmd += 'python bin/SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
+                            os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.bam'),
+                            os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.out.tab'))
+                        cmd += '#ls -l %s\n#rm -rf %s\n' %(os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' +
+                               os.path.split(genomes)[-1] + '.SRID.bam'),
+                                                         os.path.join(args.o,
+                                                                      os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[
+                                                                          -1] + '.SRID.bam'))
                         i += 1
                         fsub.write(cmd)
                         print('output bowtie codes for mapping %s to %s' % (metagenomes, genomes))
@@ -494,9 +494,9 @@ if args.html == 'F':
         # run strain finder
         i=1
         for genomes in genome_files:
-            #if '.ID.fasta' not in genomes:
-                #fsub = open(str(int(i % task)) + '.sh', 'a')
-                #fsub.write('#!/bin/bash\n')
+            if '.ID.fasta' not in genomes:
+                fsub = open(str(int(i % task)) + '.sh', 'a')
+                fsub.write('#!/bin/bash\n')
                 genomes = os.path.split(genomes)[-1]
                 genome_alignments = genomes +'.np.cPickle'
                 cmd = 'python bin/StrainFinder.py --aln %s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
@@ -504,14 +504,14 @@ if args.html == 'F':
                 cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'
                 cmd += 'mv %s > %s \n' %(os.path.join(args.r,'/*'+args.rf+'.*'),args.o)
                 i += 1
-                #fsub.write(cmd)
-                #fsub.close()
+                fsub.write(cmd)
+                fsub.close()
 
         shfiles = glob.glob('%s/*.sh'%(args.os))
         for files in shfiles:
             if 'meta.decoder.sh' not in files:
                 f0.write(('nohup sh %s > %s.nohup.out&\n')%(files,files))
-                #f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
+                f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
         f0.close()
     else:
         genome_files = glob.glob(os.path.join(args.r, '*' + args.rf))
