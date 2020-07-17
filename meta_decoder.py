@@ -510,8 +510,8 @@ if args.html == 'F':
         shfiles = glob.glob('%s/*.sh'%(args.os))
         for files in shfiles:
             if 'meta.decoder.sh' not in files:
-                f0.write(('nohup sh %s > %s.nohup.out&\n')%(files,files))
-                f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
+                f0.write(('sh %s\n')%(files))
+                #f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
         f0.close()
     else:
         genome_files = glob.glob(os.path.join(args.r, '*' + args.rf))
