@@ -512,6 +512,7 @@ if args.html == 'F':
                 f0.write(('sh %s\n')%(files))
                 #f0.write('jobmit %s %s.single\n' %(files,os.path.split(files)[1]))
         f0.close()
+        print('please run meta.decoder.sh then %s'%(' '.join(shfiles)))
     else:
         genome_files = glob.glob(os.path.join(args.r, '*' + args.rf))
         Length = dict()
