@@ -1,0 +1,2 @@
+phasefinder:
+1) einverted: error while loading shared libraries: libpq.so.5: cannot open shared object file: No such file or directory
