@@ -478,7 +478,7 @@ if args.html == 'F':
                             if args.s != 1:
                                 metagenomes = metagenomes.replace('1' + args.inf, '2' + args.inf)
                                 cmd += bowtie(genomes, metagenomes)
-                        cmd += 'python bin/SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
+                        cmd += 'mkdir tmp\npython bin/SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
                             os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.sorted.bam'),
                             os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.out.tab'))
                         cmd += '#ls -l %s\n#rm -rf %s\n' %(os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' +
