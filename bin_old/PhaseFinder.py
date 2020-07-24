@@ -12,9 +12,9 @@ from Bio.SeqUtils import GC
 
 
 def run_cmd(cmd):
-    cmd = "t1=`date +%s`;" + cmd + \
-          """;t2=`date +%s`;tdiff=`echo 'scale=3;('$t2'-'$t1')/60' | bc`;
-          echo '##### Total time:  '$tdiff' mins'"""
+    cmd = "t1=`date +%s`;"+cmd + \
+        """;t2=`date +%s`;tdiff=`echo 'scale=3;('$t2'-'$t1')/60' | bc`;
+        echo '##### Total time:  '$tdiff' mins'"""
     p = subprocess.Popen(
         cmd,
         bufsize=-1,
@@ -30,7 +30,6 @@ def is_tool(name):
     """Check whether `name` is on PATH."""
     from distutils.spawn import find_executable
     return find_executable(name) is not None
-
 
 def pipeline_locate(args):
     # step 1: identify the IR position in the genome sequence
@@ -53,7 +52,7 @@ def pipeline_locate(args):
         cmd = '''
         einverted -maxrepeat 750  -gap 100 -threshold 51 -match 5 -mismatch -9 -outfile {out}.51.outfile -outseq {out}.51.outseq -sequence {ref}
         einverted -maxrepeat 750  -gap 100 -threshold 75 -match 5 -mismatch -15 -outfile {out}.75.outfile -outseq {out}.75.outseq -sequence {ref}
-
+        
         awk 'BEGIN{{OFS="\\t";ORS="";pass=0}}{{
             if(NR%5==2){{
                 split($4,a,"/");
@@ -62,7 +61,7 @@ def pipeline_locate(args):
                 if(pass){{print $1"\\t"}}
             }}else if(NR%5==3 && pass ){{print $1-1,$3"\\t"}} else if(NR%5==0 && pass ){{print $3-1,$1"\\n"}}
         }}' {out}.51.outfile | awk '$4-$3>30 ' >{out}.pos.51.tab
-
+        
         awk 'BEGIN{{OFS="\\t";ORS="";pass=0}}{{
             if(NR%5==2){{
                 split($4,a,"/");
@@ -71,16 +70,16 @@ def pipeline_locate(args):
                 if(pass){{print $1"\\t"}}
             }}else if(NR%5==3 && pass ){{print $1-1,$3"\\t"}} else if(NR%5==0 && pass ){{print $3-1,$1"\\n"}}
         }}' {out}.75.outfile | awk '$4-$3>30 ' >{out}.pos.75.tab
-
-
+        
+        
         awk 'BEGIN{{OFS="\\t"}}{{print $1,$2,$5,$0}}' {out}.pos.51.tab |sortBed  > {out}.a.bed
         awk 'BEGIN{{OFS="\\t"}}{{print $1,$2,$5,$0}}' {out}.pos.75.tab |sortBed  > {out}.b.bed
         intersectBed   -a {out}.a.bed  -b {out}.b.bed  -v|cat - {out}.b.bed|cut -f 4- > {out}.pos.tab
-
+        
         rm -rf {out} {out}.a.bed {out}.b.bed {out}.pos.51.tab {out}.pos.75.tab {out}.51.outfile  {out}.51.outseq  {out}.75.outfile  {out}.75.outseq '''.format(
             out=tmpout, ref=reffile)
-        print("****** NOW RUNNING COMMAND ******: " + cmd)
-        print run_cmd(cmd)
+        print(("****** NOW RUNNING COMMAND ******: " + cmd))
+        print(run_cmd(cmd))
     else:
         # if the einverted parameter is specified
         cmd = '''
@@ -93,15 +92,15 @@ def pipeline_locate(args):
                 if(pass){{print $1"\\t"}}
             }}else if(NR%5==3 && pass ){{print $1-1,$3"\\t"}} else if(NR%5==0 && pass ){{print $3-1,$1"\\n"}}
         }}' {out}.outfile  >{out}.pos.tab
-
+        
         rm -rf {out} {out}.outfile  {out}.outseq  '''.format(
             out=tmpout,
             ref=reffile,
             maxIR=maxIR,
             maxmis=maxmis,
             einvertedParam=einvertedParam)
-        print("****** NOW RUNNING COMMAND ******: " + cmd)
-        print run_cmd(cmd)
+        print(("****** NOW RUNNING COMMAND ******: " + cmd))
+        print(run_cmd(cmd))
 
     seq_dict = SeqIO.to_dict(SeqIO.parse(reffile, "fasta"))
     lines = [x.rstrip().split("\t") for x in open(tmpout + ".pos.tab")]
@@ -124,20 +123,19 @@ def pipeline_locate(args):
         if homopolymer and \
                 len(re.findall(r'([ACGT])\1{4,}', str(left_seq.seq))) > 0 and \
                 len(re.findall(r'([ACGT])\1{4,}', str(right_seq.seq))) > 0:
-            # if homopolymer filter is specified
+                # if homopolymer filter is specified
             accept = 0
 
         if args.gcRange is not None and \
                 (Lgc < minGC or Rgc < minGC or Lgc > maxGC or Rgc > maxGC):
-            # if GC ratio filter is specified
+                # if GC ratio filter is specified
             accept = 0
 
         if accept:
-            print >> outfile, "\t".join(each_line) + "\t" + left_seq.seq + \
-                              "\t" + mid_seq.seq + "\t" + right_seq.seq
+            print("\t".join(each_line)+"\t"+left_seq.seq + \
+                "\t"+mid_seq.seq+"\t" + right_seq.seq, file=outfile)
 
     os.remove(tmpout + ".pos.tab")
-
 
 def pipeline_create(args):
     # step 2: read the genome with IR and the IR position info to create sequences with putative invertible region inverted
@@ -169,9 +167,9 @@ def pipeline_create(args):
 
         outputpos = list(map(int, each_line[1:5]))
         outputpos.append(right_pos2)
-        outputpos = list(map(lambda x: x - left_pos1, outputpos))
+        outputpos = list([x - left_pos1 for x in outputpos])
 
-        print >> f, name + "\t" + "\t".join(map(str, outputpos))
+        print(name + "\t" + "\t".join(map(str, outputpos)), file=f)
 
         Fversion.id = name + "_F"
         Rversion.id = name + "_R"
@@ -184,15 +182,15 @@ def pipeline_create(args):
     SeqIO.write(outseq, invertedfile, "fasta")
     f.close()
     cmd = ''' bowtie-build {genome} {genome} '''.format(genome=invertedfile)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
 
 def process(infile):
     df = pd.read_table(infile, sep="\t", names=("ID", "dir", "count"))
     df = df.pivot(
         index='ID', columns='dir', values='count').reset_index().rename_axis(
-        None, axis=1)
+            None, axis=1)
     df.columns.ID = None
     df.reset_index().fillna(0)
     return df
@@ -209,26 +207,26 @@ def pipeline_align(args):
     output = args.output
 
     cmd = '''
-    bowtie -p {core}  -a --best --strata {genome} -1 {fq1} -2 {fq2} -S|\
-    samtools view -@ {core} -F 4 -h  |sam2bed -d|sortBed |cut -f 1-4,7 > {output}.bed '''.format(
+        bowtie -p {core}  -a --best --strata {genome} -1 {fq1} -2 {fq2} -S|\
+        samtools view -@ {core} -F 4 -h  |sam2bed -d|sortBed |cut -f 1-4,7 > {output}.bed '''.format(
         genome=invertedfile, fq1=fq1, fq2=fq2, output=output, core=core)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
     cmd = '''
     awk -v out={out} 'BEGIN{{OFS="\\t"}}{{print $1"_F",$2,$3,$4,$5"\\n"$1"_R",$2,$3,$4,$5 > out".bed";print $1"_F", $6 "\\n" $1"_R",$6 > out".info" }}'  {out}
     awk '{{print $1"\\t"$2"\\t"$3"\\t1\\n"$1"\\t"$4"\\t"$5"\\t1\\n"$1"\\t"$2"\\t"$5"\\t-1"}}' {out}.bed |slopBed -b {oversize} -g {out}.info |\
     sortBed|intersectBed -c -f 1 -a - -b {output}.bed |awk '{{a[$1]+=$4*$5}}END{{for(i in a){{print i"\\t"a[i]}}}}'|sort -k1,1|sed 's/_F\\t/\\tF\\t/;s/_R\\t/\\tR\\t/' >{output}.span.count'''.format(
         out=invertedfile + ".info.tab", output=output, oversize=oversize)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
     cmd = '''
     cat {output}.bed|awk 'BEGIN{{OFS="\\t"}}{{print $4,$5,$1}}'|sed 's/_\(.\)$/\\t\\1/g'|awk '{{if(and(64,$2)){{P=1}}else{{P=2}};print $1"\\t"P"\\t"$3"\\t"$4}}' > {output}.tab
     cut -f 1-3 {output}.tab|sort|uniq -u|fgrep -f - {output}.tab|cut -f 3-4|sort|uniq -c|awk '{{print $2"\\t"$3"\\t"$1}}' >{output}.pe.count '''.format(
         output=output)
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
     dfspan = process("{output}.span.count".format(output=output))
     dfpe = process("{output}.pe.count".format(output=output))
@@ -239,17 +237,17 @@ def pipeline_align(args):
         "ID": dfmerge["ID"],
         "Pe_F": dfmerge["F_x"].astype(int),
         "Pe_R": dfmerge["R_x"].astype(int),
-        "Pe_ratio": (dfmerge["R_x"] / (dfmerge['R_x'] + dfmerge['F_x'])).astype(float).round(2),
+        "Pe_ratio": (dfmerge["R_x"]/(dfmerge['R_x']+dfmerge['F_x'])).astype(float).round(2),
         "Span_F": dfmerge["F_y"].astype(int),
         "Span_R": dfmerge["R_y"].astype(int),
-        "Span_ratio": (dfmerge["R_y"] / (dfmerge['R_y'] + dfmerge['F_y'])).astype(float).round(2)
-    }).fillna('NA')
+        "Span_ratio": (dfmerge["R_y"]/(dfmerge['R_y']+dfmerge['F_y'])).astype(float).round(2)
+        }).fillna('NA')
     df.to_csv(output + ".ratio.txt", sep="\t", index=False)
 
     cmd = '''rm {output}.bed {output}.tab {output}.span.count {output}.pe.count {out}.bed {out}.info'''.format(
         output=output, out=invertedfile + ".info.tab")
-    print("****** NOW RUNNING COMMAND ******: " + cmd)
-    print run_cmd(cmd)
+    print(("****** NOW RUNNING COMMAND ******: " + cmd))
+    print(run_cmd(cmd))
 
 
 if __name__ == "__main__":
@@ -257,8 +255,7 @@ if __name__ == "__main__":
 
     parser = ArgumentParser(
         description='Identifiy invertible regions in genomic sequence')
-    subparsers = parser.add_subparsers(dest='command', title="Usage:   PhaseFinder.py <command> [options]",
-                                       metavar="Commands:")
+    subparsers = parser.add_subparsers(dest='command',title="Usage:   PhaseFinder.py <command> [options]",metavar="Commands:")
 
     parser_locate = subparsers.add_parser(
         "locate", help="locate putative inverted regions")
@@ -393,9 +390,9 @@ if __name__ == "__main__":
         metavar='')
     parser_align.set_defaults(func=pipeline_align)
 
-    for i in ["bowtie", "samtools", "sam2bed", "bc", "einverted"]:
+    for i in ["bowtie", "samtools", "sam2bed", "bc","einverted"]:
         if not is_tool(i):
-            print "tool {i} is not installed".format(i=i)
+            print("tool {i} is not installed".format(i=i))
             sys.exit(0)
 
     args = parser.parse_args()
