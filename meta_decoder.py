@@ -397,7 +397,7 @@ if args.html == 'F':
                     f1.write(os.path.split(filename)[-1]+'\t'+str(record.id)+'\n')
         f1.close()
         cmd = 'cat '+os.path.join(args.r,'*'+args.rf)+'> %s\n' %(os.path.join(args.o,'all.ref.genomes.fasta'))
-        #f0.write(cmd)
+        f0.write(cmd)
 
         # generate metagenome list file
         metagenome_files=glob.glob(os.path.join(args.i,'*'+args.inf))
@@ -414,13 +414,13 @@ if args.html == 'F':
                         f1.write(filename.split(args.inf)[0]+'2'+args.inf+'\n')
                         f1.write(filename.split(args.inf)[0] + '1' + args.inf + '\n')
             f1.close()
-            #f0.write(cmd)
+            f0.write(cmd)
         # run strain finder preprocess
         cmd = 'python bin/0.run.py --fastqs %s  --ref %s  --map %s\n' % (
                     os.path.join(args.o, 'metagenome.list'),
                     os.path.join(args.o,'all.ref.genomes.fasta'),
                     os.path.join(args.o, 'ref.map.txt'))
-        #f0.write(cmd)
+        f0.write(cmd)
 
         # run PhaseFinder
         i=1
@@ -503,7 +503,7 @@ if args.html == 'F':
                 cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'
                 cmd += 'mv %s > %s \n' %(os.path.join(args.r,'/*'+args.rf+'.*'),args.o)
                 i += 1
-                #fsub.write(cmd)
+                fsub.write(cmd)
                 fsub.close()
 
         shfiles = glob.glob('%s/*.sh'%(args.os))
