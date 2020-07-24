@@ -80,6 +80,7 @@ try:
 except OSError:
     pass
 try:
+    os.system('rm -rf %s'%(args.os))
     os.mkdir(args.os)
 except OSError:
     pass
@@ -428,8 +429,9 @@ if args.html == 'F':
             if '.ID.fasta' not in genomes:
                 try:
                     f1=open(genomes+'.ID.fasta','r')
+                    print(genomes+'.ID.fasta')
                 except IOError:
-                    fsub = open(str(int(i % task)) + '.sh', 'a')
+                    fsub = open(args.os + '/' + str(int(i % task)) + '.sh', 'w')
                     fsub.write('#!/bin/bash\n')
                     cmd = ''
                     try:
@@ -457,8 +459,7 @@ if args.html == 'F':
                 for metagenomes in metagenome_files:
                     if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes):
                         print('generating bowtie codes for mapping %s to %s' %(metagenomes, genomes))
-                        fsub = open(str(int(i % task)) + '.sh', 'a')
-                        fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'w')
+                        fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'a')
                         fsub.write('#!/bin/bash\n')
                         cmd = ''
                         try:
@@ -494,7 +495,7 @@ if args.html == 'F':
         i=1
         for genomes in genome_files:
             if '.ID.fasta' not in genomes:
-                fsub = open(str(int(i % task)) + '.sh', 'a')
+                fsub = open(args.os + '/' + str(int(i % task)) + '.sh', 'a')
                 fsub.write('#!/bin/bash\n')
                 genomes = os.path.split(genomes)[-1]
                 genome_alignments = genomes +'.np.cPickle'
