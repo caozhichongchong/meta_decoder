@@ -417,10 +417,10 @@ if args.html == 'F':
             f1.close()
             f0.write(cmd)
         # run strain finder preprocess
-        cmd = 'python bin/0.run.py --fastqs %s  --ref %s  --map %s\n' % (
+        cmd = 'python bin/0.run.py --fastqs %s  --ref %s  --map %s --inf %s\n' % (
                     os.path.join(args.o, 'metagenome.list'),
                     os.path.join(args.o,'all.ref.genomes.fasta'),
-                    os.path.join(args.o, 'ref.map.txt'))
+                    os.path.join(args.o, 'ref.map.txt'),args.inf)
         f0.write(cmd)
 
         # run PhaseFinder

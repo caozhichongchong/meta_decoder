@@ -8,6 +8,7 @@ g1 = parser.add_argument_group('Required arguments')
 g1.add_argument('--fastqs', help='List of FASTQ files', required=True)
 g1.add_argument('--ref', help='Reference database (FASTA)', required=True)
 g1.add_argument('--map', help='Map of genomes to contigs (tab-delimited)', required=True)
+g1.add_argument('--inf', help='input file format',default='.fastq', required=False)
 g2 = parser.add_argument_group('BWA options')
 g2.add_argument('--pct', help='Percent identity', type=float, default=90)
 g2.add_argument('--len', help='Minimum length of mapped reads', type=float, default=40)
@@ -24,12 +25,12 @@ g4.add_argument('--npos', help='Randomly subsample [npos] alignment sites', type
 args = parser.parse_args()
 
 # Read input data
-prefixes = [re.sub('.fastq', '', line.rstrip()) for line in open(args.fastqs)]
+prefixes = [re.sub(args.inf, '', line.rstrip()) for line in open(args.fastqs)]
 
 # 1) Run BWA on each FASTQ
 os.system('bwa index %s' %(args.ref))
 for prefix in prefixes:
-    os.system('bwa mem -a %s %s.fastq > %s.sam' %(args.ref, prefix, prefix))
+    os.system('bwa mem -a %s %s%s > %s.sam' %(args.ref, args.inf, prefix, prefix))
 
 # 2) Filter SAM files
 for prefix in prefixes:
