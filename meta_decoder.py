@@ -196,7 +196,7 @@ def bowtie(genomes, metagenomes):
         ftest = open('%s.sorted.bam' %(tempbamoutput),'r')
     except IOError:
         cmds += args.bwa + ' mem -t %s %s %s |%s view -@ %s -S -b -F 4 >%s.bam\n%s sort -@ %s %s.bam -o %s.sorted.bam\n%s index -@ %s %s.sorted.bam\n' % (
-            args.t, genomes, ''.join(metagenomes), args.sam, args.t,
+            args.t, genomes, ' '.join(metagenomes), args.sam, args.t,
             tempbamoutput, args.sam, args.t, tempbamoutput, tempbamoutput, args.sam, args.t, tempbamoutput)
     cmds += '%s mpileup --threads %s -q30 -B -Ou -d3000 -f %s %s.sorted.bam  | %s call --ploidy 1 --threads %s -mv > %s.raw.vcf' % (
         args.bcf, args.t, genomes, tempbamoutput, args.bcf,args.t, tempbamoutput)
@@ -290,8 +290,6 @@ def strain_finder(SNP_file):
                 pass
         except IndexError:
             pass
-
-
 
 def freq_call_sub(vcf_file_list):
     SNP = dict()
