@@ -445,7 +445,7 @@ if args.html == 'F':
                         cmd += 'python bin/PhaseFinder.py create -f %s -t %s -s 1000 -i %s\n' \
                                %(genomes,genomes+'.einverted.tab',genomes+'.ID.fasta')
                     i+=1
-                    fsub.write(cmd)
+                    #fsub.write(cmd)
                     fsub.close()
 
         # run bowtie, PhaseFinder and SRID
@@ -464,10 +464,10 @@ if args.html == 'F':
                             ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'),'r')
                         except IOError:
                             cmd += ''
-                            cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
-                                genomes+'.ID.fasta', metagenomes,
-                                metagenomes.replace('1'+args.inf,'2'+args.inf),
-                                os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
+                            #cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
+                            #    genomes+'.ID.fasta', metagenomes,
+                            #    metagenomes.replace('1'+args.inf,'2'+args.inf),
+                            #    os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
                         try:
                             ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+
                                                     '_'+os.path.split(genomes)[-1]+'.sorted.bam.cov'),'r')
