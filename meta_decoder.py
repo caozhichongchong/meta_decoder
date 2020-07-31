@@ -457,17 +457,17 @@ if args.html == 'F':
                 for metagenomes in metagenome_files:
                     if '1'+args.inf in metagenomes or (args.s == 1 and '2'+args.inf not in metagenomes):
                         print('generating bowtie codes for mapping %s to %s' %(metagenomes, genomes))
-                        fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'a')
-                        fsub.write('#!/bin/bash\n')
+                        #fsub = open(args.os + '/' +str(int(i % task)) + '.sh', 'a')
+                        #fsub.write('#!/bin/bash\n')
                         cmd = ''
                         try:
                             ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'),'r')
                         except IOError:
                             cmd += ''
-                            #cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
-                            #    genomes+'.ID.fasta', metagenomes,
-                            #    metagenomes.replace('1'+args.inf,'2'+args.inf),
-                            #    os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
+                            cmd += 'python bin/PhaseFinder.py ratio -i %s -1 %s -2 %s -p 16 -o %s\n' % (
+                                genomes+'.ID.fasta', metagenomes,
+                                metagenomes.replace('1'+args.inf,'2'+args.inf),
+                                os.path.join(args.o,os.path.split(metagenomes)[-1]+'_'+os.path.split(genomes)[-1]+'.out'))
                         try:
                             ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+
                                                     '_'+os.path.split(genomes)[-1]+'.sorted.bam.cov'),'r')
@@ -486,9 +486,9 @@ if args.html == 'F':
                                                                       os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[
                                                                           -1] + '.SRID.bam'))
                         i += 1
-                        fsub.write(cmd)
+                        #fsub.write(cmd)
                         print('output bowtie codes for mapping %s to %s' % (metagenomes, genomes))
-                        fsub.close()
+                        #fsub.close()
 
         # run strain finder
         i=1
