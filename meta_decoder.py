@@ -185,7 +185,7 @@ def bowtie(genomes, metagenomes):
     print('processing bowtie mapping %s for %s' % (metagenomes, genomes))
     # bowtie alignment
     cmds = ''
-    tempbamoutput = os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1])
+    tempbamoutput = os.path.join(args.o, os.path.split(metagenomes[0])[-1] + '_' + os.path.split(genomes)[-1])
     try:
         ftest = open(genomes + '.bwt', 'r')
     except IOError:
@@ -196,7 +196,7 @@ def bowtie(genomes, metagenomes):
         ftest = open('%s.sorted.bam' %(tempbamoutput),'r')
     except IOError:
         cmds += args.bwa + ' mem -t %s %s %s |%s view -@ %s -S -b -F 4 >%s.bam\n%s sort -@ %s %s.bam -o %s.sorted.bam\n%s index -@ %s %s.sorted.bam\n' % (
-            args.t, genomes, metagenomes, args.sam, args.t,
+            args.t, genomes, ''.join(metagenomes), args.sam, args.t,
             tempbamoutput, args.sam, args.t, tempbamoutput, tempbamoutput, args.sam, args.t, tempbamoutput)
     cmds += '%s mpileup --threads %s -q30 -B -Ou -d3000 -f %s %s.sorted.bam  | %s call --ploidy 1 --threads %s -mv > %s.raw.vcf' % (
         args.bcf, args.t, genomes, tempbamoutput, args.bcf,args.t, tempbamoutput)
@@ -474,10 +474,11 @@ if args.html == 'F':
                             ftest=open(os.path.join(args.o,os.path.split(metagenomes)[-1]+
                                                     '_'+os.path.split(genomes)[-1]+'.sorted.bam.cov'),'r')
                         except IOError:
-                            cmd += bowtie(genomes, metagenomes)
                             if args.s != 1:
-                                metagenomes = metagenomes.replace('1' + args.inf, '2' + args.inf)
-                                cmd += bowtie(genomes, metagenomes)
+                                cmd += bowtie(genomes, [metagenomes,
+                                                        metagenomes.replace('1' + args.inf, '2' + args.inf)])
+                            else:
+                                cmd += bowtie(genomes, [metagenomes])
                         cmd += 'mkdir tmp\npython bin/SRID.py -b %s -p 12 -r 100 -m 200 -s 71 -n 4 -o %s -t tmp\n' % (
                             os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.sorted.bam'),
                             os.path.join(args.o, os.path.split(metagenomes)[-1] + '_' + os.path.split(genomes)[-1] + '.SRID.out.tab'))
