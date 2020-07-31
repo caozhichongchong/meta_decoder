@@ -198,16 +198,16 @@ def bowtie(genomes, metagenomes):
         cmds += args.bwa + ' mem -t %s %s %s |%s view -@ %s -S -b -F 4 >%s.bam\n%s sort -@ %s %s.bam -o %s.sorted.bam\n%s index -@ %s %s.sorted.bam\n' % (
             args.t, genomes, ' '.join(metagenomes), args.sam, args.t,
             tempbamoutput, args.sam, args.t, tempbamoutput, tempbamoutput, args.sam, args.t, tempbamoutput)
-    cmds += '%s mpileup --threads %s -q30 -B -Ou -d3000 -f %s %s.sorted.bam  | %s call --ploidy 1 --threads %s -mv > %s.raw.vcf' % (
-        args.bcf, args.t, genomes, tempbamoutput, args.bcf,args.t, tempbamoutput)
-    cmds += '\n%s filter --threads %s -s LowQual -e \'DP>100\' %s.raw.vcf > %s.flt.vcf \n' % (
-        args.bcf,args.t, tempbamoutput, tempbamoutput)
+    #cmds += '%s mpileup --threads %s -q30 -B -Ou -d3000 -f %s %s.sorted.bam  | %s call --ploidy 1 --threads %s -mv > %s.raw.vcf' % (
+    #    args.bcf, args.t, genomes, tempbamoutput, args.bcf,args.t, tempbamoutput)
+    #cmds += '\n%s filter --threads %s -s LowQual -e \'DP>100\' %s.raw.vcf > %s.flt.vcf \n' % (
+    #    args.bcf,args.t, tempbamoutput, tempbamoutput)
     # calculate coverage
-    cmds += '%s depth -Q 10 %s.sorted.bam > %s.sorted.bam.cov\n' % (
-        args.sam, tempbamoutput, tempbamoutput)
-    cmds += 'echo -e "Ref_ID\\tCov_length\\tAverage\\tStdev" > %s.sorted.bam.avgcov\n' % (tempbamoutput)
-    cmds += '%s depth %s.sorted.bam |  awk \'{sum[$1]+=$3; sumsq[$1]+=$3*$3; count[$1]++} END { for (id in sum) { print id,"\t",count[id],"\t",sum[id]/count[id],"\t",sqrt(sumsq[id]/count[id] - (sum[id]/count[id])**2)}}\' >> %s.sorted.bam.avgcov\n' % (
-        args.sam, tempbamoutput, tempbamoutput)
+    #cmds += '%s depth -Q 10 %s.sorted.bam > %s.sorted.bam.cov\n' % (
+    #    args.sam, tempbamoutput, tempbamoutput)
+    #cmds += 'echo -e "Ref_ID\\tCov_length\\tAverage\\tStdev" > %s.sorted.bam.avgcov\n' % (tempbamoutput)
+    #cmds += '%s depth %s.sorted.bam |  awk \'{sum[$1]+=$3; sumsq[$1]+=$3*$3; count[$1]++} END { for (id in sum) { print id,"\t",count[id],"\t",sum[id]/count[id],"\t",sqrt(sumsq[id]/count[id] - (sum[id]/count[id])**2)}}\' >> %s.sorted.bam.avgcov\n' % (
+    #    args.sam, tempbamoutput, tempbamoutput)
     # statistics
     #cmds += statistics_vcf('%s.flt.vcf' % tempbamoutput)
     # optional cleanup
