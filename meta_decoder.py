@@ -500,8 +500,8 @@ if args.html == 'F':
                 genome_alignments = genomes +'.np.cPickle'
                 cmd = 'python bin/StrainFinder.py --aln %s  -N 5 --max_reps 10 --dtol 1 --ntol 2 --max_time 3600 --converge --em %s.cpickle'%(genome_alignments, genomes)+\
                        ' --em_out %s.cpickle --otu_out %s.otu_table.txt --log %s.log.txt --n_keep 3 --force_update --merge_out --msg\n' %(genomes, genomes,genomes)
-                cmd += 'mv *.cpickle *.otu_table.txt *.log.txt > '+str(args.o)+'\n'
-                cmd += 'mv %s > %s \n' %(os.path.join(args.r,'/*'+args.rf+'.*'),args.o)
+                cmd += 'mv *.cpickle *.otu_table.txt *.log.txt '+str(args.o)+'/\n'
+                cmd += 'mv %s %s/ \n' %(os.path.join(args.r,'/*'+args.rf+'.*'),args.o)
                 i += 1
                 fsub.write(cmd)
                 fsub.close()
