@@ -123,13 +123,11 @@ def bowtie(genomes, metagenomes):
         args.vcf, tempbamoutput, tempbamoutput)
     return cmds
 
-
 def tsv_to_html(file):
     # Read the csv file in
     df = pd.read_csv(file, sep='\t',header=0,error_bad_lines=False)
     # Save to file
     df.to_html(file+'.html')
-
 
 ################################################## Programme ########################################################
 if args.html == 'F':
