@@ -1,0 +1,1 @@
+inputpath = 'example//'
