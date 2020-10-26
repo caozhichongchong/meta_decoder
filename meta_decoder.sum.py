@@ -116,16 +116,9 @@ print('generating heatmap.R')
 newRcode_temp = os.path.join(args.i,'heatmap_temp.R')
 newRcode = os.path.join(args.i,'heatmap.R')
 f1 = open(newRcode_temp,'w')
-f1.write('inputpath = \'%s/\'\n'%(args.i))
+f1.write('inputpath = \'%s/\'\n'%(os.path.abspath(args.i)))
 f1.close()
 os.system('cat %s %s > %s'%(newRcode_temp,os.path.join(workingdir,'heatmap.R'),newRcode))
 print('plot all snp profiles %s/*.snp.profile.SNP.pdf'%(args.i))
 os.system('%s --vanilla < %s'%(args.R, newRcode))
 
-#f1=open(os.path.join(args.i,'all.snp.profile.sample'),'w')
-#for position in snp_profile_sample:
-#    for Chr_i_major in snp_profile_sample[position]:
-#            for samplename_allele in snp_profile[Chr_i_major[0]]:
-#                f1.write('%s\t%s\n'%(Chr_i_major[0],(samplename_allele)))
-
-#f1.close()
