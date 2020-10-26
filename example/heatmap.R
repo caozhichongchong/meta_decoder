@@ -41,7 +41,7 @@ for (genome in allgenome)
   empty_Allele[,1]=0
   Allele=rbind(Allele,
                empty_Allele)
-  Allele=Allele[order(Allele[,1]),]
+  Allele=Allele[order(as.numeric(Allele[,1])),]
   Allele=Allele[order(row.names(Allele)),]
   row.names(Allele)[which(Allele[,1]!='0')]=Allele[which(Allele[,1]!='0'),1]
   library(pheatmap)
