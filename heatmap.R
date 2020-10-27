@@ -21,9 +21,9 @@ for (genome in allgenome)
   genotypes = unique(Allele1$genotypes)
   contig = unique(Allele1$contig)
   position = unique(paste(Allele1$contig,Allele1$position))
-  Allele = matrix('ref',ncol=length(genotypes)+1,
+  Allele = matrix('ref',ncol=length(genotypes)+2,
                   nrow=length(position))
-  colnames(Allele)=c('POS',genotypes)
+  colnames(Allele)=c('POS','REF',genotypes)
   row.names(Allele)=position
   Allele[,1]=str_split_fixed(position, " ", 2)[,2]
   for(i in 1:nrow(Allele1))
@@ -32,6 +32,11 @@ for (genome in allgenome)
     {n=which(colnames(Allele)==Allele1$genotypes[i])
     m=which(row.names(Allele)==paste(Allele1$contig[i],Allele1$position[i]))
     Allele[m,n]=Allele1$allele[i]}
+    else
+    {
+      m=which(row.names(Allele)==paste(Allele1$contig[i],Allele1$position[i]))
+      Allele[m,2]=Allele1$allele[i]
+    }
   }
   row.names(Allele)=str_split_fixed(position, " ", 2)[,1]
   allcontigs = unique(Allele1$contig)
@@ -62,7 +67,7 @@ for (genome in allgenome)
            color = Color_set,
            show_rownames= TRUE,
            show_colnames = TRUE,
-           cluster_cols = TRUE,
+           cluster_cols = FALSE,
            legend_breaks =   c(-1,0,1,2,3,4),
            fontsize_col = 10,
            fontsize_row = 8,
