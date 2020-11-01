@@ -57,8 +57,8 @@ for (genome in allgenome)
   mat[which(mat=='empty')]=-1
   mat[which(mat=='ref')]=0
   mat[which(mat=='A')]=1
-  mat[which(mat=='T')]=2
-  mat[which(mat=='G')]=3
+  mat[which(mat=='G')]=2
+  mat[which(mat=='T')]=3
   mat[which(mat=='C')]=4
   mat=matrix(as.numeric(mat),nrow=nrow(mat))
   row.names(mat)=row.names(Allele)
@@ -71,7 +71,7 @@ for (genome in allgenome)
            legend_breaks =   c(-1,0,1,2,3,4),
            fontsize_col = 10,
            fontsize_row = 8,
-           legend_labels = c('','Major allele','A','T','G','C'),
+           legend_labels = c('','Major allele','A','G','T','C'),
            cluster_rows = FALSE,
            width = 5+2*ncol(mat),
            height = min(5+0.1*nrow(mat),50),
