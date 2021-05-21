@@ -82,14 +82,16 @@ Allels_order = ['A','T','G','C']
 print('run example: python meta_decoder.sum.py -i example/ -fq 1.fastq -R R')
 for files in vcf:
     print('processing vcf %s'%(files))
+    genome_name = os.path.split(files)[-1].split(args.fq)[0].split('.flt.vcf')[0]
     SNP, SNP_count, SNP_major, Total, REF = freq_call_sub(files, REF)
     samplename = os.path.split(files)[-1].split(args.fq)[0]
     i = 0
     for Chr_i in SNP_major:
         temp = 0
         for major in SNP_major[Chr_i]:
-            snp_profile.setdefault('%s_%s' % (Chr_i, major), [])
-            snp_profile['%s_%s' % (Chr_i, major)].append(samplename + ':' + Set[temp])
+            newSNPname = '%s__%s_%s' % (genome_name,Chr_i, major)
+            snp_profile.setdefault(newSNPname, [])
+            snp_profile[newSNPname].append(samplename + ':' + Set[temp])
             # snp_profile_sample.setdefault(samplename, [])
             # snp_profile_sample[samplename].append(['%s_%s' % (Chr_i, major), SNP[Chr_i][Allels[major]]])
             temp += 1
@@ -106,8 +108,10 @@ f1.close()
 
 print('output all snp profiles %s'%(os.path.join(args.i,'all.snp.profile')))
 f1=open(os.path.join(args.i,'all.snp.profile'),'w')
-for Chr_i in snp_profile:
-  f1.write('%s\t%s\t%s\n'%(Chr_i,REF['_'.join(Chr_i.split('_')[:-1])],'\t'.join(snp_profile[Chr_i])))
+for newsnp in snp_profile:
+    Chr_i = newsnp.split('__')[1]
+    f1.write('%s\t%s\t%s\n'%(newsnp,
+                           REF['_'.join(Chr_i.split('_')[:-1])],'\t'.join(snp_profile[newsnp])))
 
 f1.close()
 

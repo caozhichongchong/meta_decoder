@@ -6,11 +6,11 @@ library(stringr)
 Allele1$allele=str_split_fixed(Allele1$V1, "--", 2)[,2]
 Allele1$position=str_split_fixed(Allele1$allele, "_", 2)[,1]
 Allele1$allele=str_split_fixed(Allele1$allele, "_", 2)[,2]
-Allele1$genotypes = paste(str_split_fixed(Allele1$V3, "_", 2)[,1],
+Allele1$genotypes = paste(str_split_fixed(str_split_fixed(Allele1$V3, "_", 2)[,1],":",2)[1],
                           str_split_fixed(Allele1$V3, ":", 2)[,2],
                           sep = ':')
-Allele1$refgenome = str_split_fixed(Allele1$V1, "_", 2)[,1]
-Allele1$contig = str_split_fixed(Allele1$V1, "_", 2)[,2]
+Allele1$refgenome = str_split_fixed(Allele1$V1, "__", 2)[,1]
+Allele1$contig = str_split_fixed(Allele1$V1, "__", 2)[,2]
 Allele1$contig = str_split_fixed(Allele1$contig, "--", 2)[,1]
 
 Alleleall = Allele1
@@ -78,4 +78,3 @@ for (genome in allgenome)
            filename = paste(inputpath,paste(genome,'snp.profile.SNP.pdf',sep = '.'),sep = '/')
   )
 }
-

@@ -1,0 +1,54 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##bcftoolsVersion=1.9+htslib-1.9
+##bcftoolsCommand=mpileup --threads 40 -q30 -B -Ou -d3000 -f /scratch/users/anniz44/ENIGMA/single_cell/marker/search_output/0/metabat_bins_22sept_9_29_bin-contigs.fa.blast.txt.filter.aa /scratch/users/anniz44/ENIGMA/metagenomes_JMC/single_marker/DP16D-06-17-14_45461_2_1.inter1.fastq_metabat_bins_22sept_9_29_bin-contigs.fa.blast.txt.filter.aa.sorted.bam
+##reference=file:///scratch/users/anniz44/ENIGMA/single_cell/marker/search_output/0/metabat_bins_22sept_9_29_bin-contigs.fa.blast.txt.filter.aa
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_5978_0_11256_19_541,length=522>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_97685_0_16122_4880_5429,length=549>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_214891_0_6110_2037_2571,length=534>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_214891_0_6110_3309_3840,length=531>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700,length=489>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_214891_0_6110_1323_1689,length=366>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_271128_0_28487_2353_2659,length=306>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_86839_0_7370_2435_2684,length=249>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_112926_0_13187_5937_7416,length=1479>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_47383_0_4253_2918_3767,length=849>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_242462_0_21189_5661_6096,length=435>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_96393_0_9955_7761_8043,length=282>
+##contig=<ID=metabat_bins_22sept_9.29.fa_k255_37275_0_9254_191_1373,length=1182>
+##ALT=<ID=*,Description="Represents allele(s) other than observed.">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##INFO=<ID=IDV,Number=1,Type=Integer,Description="Maximum number of raw reads supporting an indel">
+##INFO=<ID=IMF,Number=1,Type=Float,Description="Maximum fraction of raw reads supporting an indel">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##INFO=<ID=VDB,Number=1,Type=Float,Description="Variant Distance Bias for filtering splice-site artefacts in RNA-seq data (bigger is better)",Version="3">
+##INFO=<ID=RPB,Number=1,Type=Float,Description="Mann-Whitney U test of Read Position Bias (bigger is better)">
+##INFO=<ID=MQB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality Bias (bigger is better)">
+##INFO=<ID=BQB,Number=1,Type=Float,Description="Mann-Whitney U test of Base Quality Bias (bigger is better)">
+##INFO=<ID=MQSB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality vs Strand Bias (bigger is better)">
+##INFO=<ID=SGB,Number=1,Type=Float,Description="Segregation based metric.">
+##INFO=<ID=MQ0F,Number=1,Type=Float,Description="Fraction of MQ0 reads (smaller is better)">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="List of Phred-scaled genotype likelihoods">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##INFO=<ID=ICB,Number=1,Type=Float,Description="Inbreeding Coefficient Binomial test (bigger is better)">
+##INFO=<ID=HOB,Number=1,Type=Float,Description="Bias in the number of HOMs number (smaller is better)">
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes for each ALT allele, in the same order as listed">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##INFO=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
+##INFO=<ID=MQ,Number=1,Type=Integer,Description="Average mapping quality">
+##bcftools_callVersion=1.9+htslib-1.9
+##bcftools_callCommand=call --ploidy 1 --threads 40 -mv; Date=Fri Feb 14 06:26:50 2020
+##FILTER=<ID=LowQual,Description="Set if true: DP>100">
+##bcftools_filterVersion=1.9+htslib-1.9
+##bcftools_filterCommand=filter --threads 40 -s LowQual -e DP>100 /scratch/users/anniz44/ENIGMA/metagenomes_JMC/single_marker/DP16D-06-17-14_45461_2_1.inter1.fastq_metabat_bins_22sept_9_29_bin-contigs.fa.blast.txt.filter.aa.raw.vcf; Date=Fri Feb 14 06:26:50 2020
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	/scratch/users/anniz44/ENIGMA/metagenomes_JMC/single_marker/DP16D-06-17-14_45461_2_1.inter1.fastq_metabat_bins_22sept_9_29_bin-contigs.fa.blast.txt.filter.aa.sorted.bam
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	111	.	G	A	9.88514	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=58	GT:PL	1:39,0
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	114	.	A	T	10.7923	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=58	GT:PL	1:40,0
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	117	.	T	C	10.7923	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=58	GT:PL	1:40,0
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	126	.	T	C	6.51248	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=58	GT:PL	1:35,0
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	297	.	T	G	44.4146	PASS	DP=2;VDB=0.02;SGB=-0.453602;MQSB=1;MQ0F=0;AC=1;AN=1;DP4=0,0,1,1;MQ=60	GT:PL	1:74,0
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	309	.	C	A	40.4148	PASS	DP=2;VDB=0.02;SGB=-0.453602;MQSB=1;MQ0F=0;AC=1;AN=1;DP4=0,0,1,1;MQ=60	GT:PL	1:70,0
+metabat_bins_22sept_9.29.fa_k255_214891_0_6110_4211_4700	310	.	G	A	44.4146	PASS	DP=2;VDB=0.02;SGB=-0.453602;MQSB=1;MQ0F=0;AC=1;AN=1;DP4=0,0,1,1;MQ=60	GT:PL	1:74,0
+metabat_bins_22sept_9.29.fa_k255_47383_0_4253_2918_3767	830	.	T	A	3.22451	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=30	GT:PL	1:30,0
+metabat_bins_22sept_9.29.fa_k255_47383_0_4253_2918_3767	831	.	G	A	3.22451	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=30	GT:PL	1:30,0
+metabat_bins_22sept_9.29.fa_k255_47383_0_4253_2918_3767	837	.	C	T	3.22451	PASS	DP=1;SGB=-0.379885;MQ0F=0;AC=1;AN=1;DP4=0,0,0,1;MQ=30	GT:PL	1:30,0

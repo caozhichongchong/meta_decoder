@@ -7,11 +7,11 @@ library(stringr)
 Allele1$allele=str_split_fixed(Allele1$V1, "--", 2)[,2]
 Allele1$position=str_split_fixed(Allele1$allele, "_", 2)[,1]
 Allele1$allele=str_split_fixed(Allele1$allele, "_", 2)[,2]
-Allele1$genotypes = paste(str_split_fixed(Allele1$V3, "_", 2)[,1],
+Allele1$genotypes = paste(str_split_fixed(str_split_fixed(Allele1$V3, "_", 2)[,1],":",2)[1],
                           str_split_fixed(Allele1$V3, ":", 2)[,2],
                           sep = ':')
-Allele1$refgenome = str_split_fixed(Allele1$V1, "_", 2)[,1]
-Allele1$contig = str_split_fixed(Allele1$V1, "_", 2)[,2]
+Allele1$refgenome = str_split_fixed(Allele1$V1, "__", 2)[,1]
+Allele1$contig = str_split_fixed(Allele1$V1, "__", 2)[,2]
 Allele1$contig = str_split_fixed(Allele1$contig, "--", 2)[,1]
 
 Alleleall = Allele1
@@ -22,9 +22,9 @@ for (genome in allgenome)
   genotypes = unique(Allele1$genotypes)
   contig = unique(Allele1$contig)
   position = unique(paste(Allele1$contig,Allele1$position))
-  Allele = matrix('ref',ncol=length(genotypes)+1,
+  Allele = matrix('ref',ncol=length(genotypes)+2,
                   nrow=length(position))
-  colnames(Allele)=c('POS',genotypes)
+  colnames(Allele)=c('POS','REF',genotypes)
   row.names(Allele)=position
   Allele[,1]=str_split_fixed(position, " ", 2)[,2]
   for(i in 1:nrow(Allele1))
@@ -33,6 +33,11 @@ for (genome in allgenome)
     {n=which(colnames(Allele)==Allele1$genotypes[i])
     m=which(row.names(Allele)==paste(Allele1$contig[i],Allele1$position[i]))
     Allele[m,n]=Allele1$allele[i]}
+    else
+    {
+      m=which(row.names(Allele)==paste(Allele1$contig[i],Allele1$position[i]))
+      Allele[m,2]=Allele1$allele[i]
+    }
   }
   row.names(Allele)=str_split_fixed(position, " ", 2)[,1]
   allcontigs = unique(Allele1$contig)
@@ -53,8 +58,8 @@ for (genome in allgenome)
   mat[which(mat=='empty')]=-1
   mat[which(mat=='ref')]=0
   mat[which(mat=='A')]=1
-  mat[which(mat=='T')]=2
-  mat[which(mat=='G')]=3
+  mat[which(mat=='G')]=2
+  mat[which(mat=='T')]=3
   mat[which(mat=='C')]=4
   mat=matrix(as.numeric(mat),nrow=nrow(mat))
   row.names(mat)=row.names(Allele)
@@ -63,15 +68,14 @@ for (genome in allgenome)
            color = Color_set,
            show_rownames= TRUE,
            show_colnames = TRUE,
-           cluster_cols = TRUE,
+           cluster_cols = FALSE,
            legend_breaks =   c(-1,0,1,2,3,4),
            fontsize_col = 10,
            fontsize_row = 8,
-           legend_labels = c('','Major allele','A','T','G','C'),
+           legend_labels = c('','Major allele','A','G','T','C'),
            cluster_rows = FALSE,
            width = 5+2*ncol(mat),
            height = min(5+0.1*nrow(mat),50),
            filename = paste(inputpath,paste(genome,'snp.profile.SNP.pdf',sep = '.'),sep = '/')
   )
 }
-
