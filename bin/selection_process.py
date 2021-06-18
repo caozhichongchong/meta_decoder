@@ -264,7 +264,7 @@ def HS_filtering():
     for gene in HS_gene:
         num_N = HS_gene[gene].count('N')
         num_S = HS_gene[gene].count('S')
-        if num_N + num_S > 1 and (num_S == 0 or float(num_N)/float(num_S) > 1):
+        if num_N + num_S > 1 and (num_S == 0 or float(num_N)/float(num_S) >= 2):
             HS_list.append(gene)
     return HS_list
 
