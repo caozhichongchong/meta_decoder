@@ -319,7 +319,7 @@ if filesize == 0:
             if Total == 0:
                 Total = len(lines_set) - 9
             if "INDEL" not in lines_set[7] \
-                    and (lines_set[6] != 'LowQual' or float(lines_set[5]) >= Qual):
+                    and lines_set[6] != 'LowQual':
                 SNP_check_all_fq(lines_set)
     outputvcf(output_name)
     HS_list = HS_filtering()
