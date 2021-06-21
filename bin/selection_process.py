@@ -35,8 +35,8 @@ optional.add_argument('-fasttree',
 args = parser.parse_args()
 # set up parameters
 vcf_name = '.flt.snp.vcf'
-Qual = 29.5
-min_minor_ALT = 3 # at least 3 reads mapped
+#Qual = 29.5
+min_minor_ALT = 1 # at least 1 reads mapped
 outputname_set = ['filtered']
 # Set up A T G C
 Allels = dict()
